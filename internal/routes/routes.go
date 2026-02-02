@@ -3,7 +3,6 @@ package routes
 import (
 	"canteen/internal/middleware"
 	"canteen/internal/routes/endpoints"
-	"canteen/internal/storage/mariadb"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +10,6 @@ import (
 
 func InitRoute() {
 	route := gin.Default()
-	mariadb.DbInit()
 	route.SetTrustedProxies([]string{"127.0.0.1"})
 
 	route.Use(middleware.CORS())
