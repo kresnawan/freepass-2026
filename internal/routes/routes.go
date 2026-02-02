@@ -18,7 +18,6 @@ func InitRoute() {
 	{
 		endpoints.UserEndpointsGroup(v1Endpoint)
 		endpoints.AuthEndpointsGroup(v1Endpoint)
-		endpoints.AdminEndpointsGroup(v1Endpoint)
 		endpoints.OrderEndpointsGroup(v1Endpoint)
 		endpoints.CanteenEndpointsGroup(v1Endpoint)
 	}
