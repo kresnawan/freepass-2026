@@ -1,6 +1,7 @@
 package mariadb
 
 import (
+	"canteen/internal/env"
 	"database/sql"
 	"fmt"
 	"log"
@@ -9,9 +10,8 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-var db *sql.DB
-
-func DbInit() {
+func DbInit() *sql.DB {
+	env.InitEnv()
 	config := mysql.NewConfig()
 
 	config.Addr = "localhost:3306"
@@ -31,4 +31,7 @@ func DbInit() {
 	}
 
 	fmt.Printf("Connection with database %s established\n", os.Getenv("DB_NAME"))
+	return db
 }
+
+var Db = DbInit()
