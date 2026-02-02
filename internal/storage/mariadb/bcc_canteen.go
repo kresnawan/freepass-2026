@@ -14,12 +14,11 @@ var db *sql.DB
 func DbInit() {
 	config := mysql.NewConfig()
 
-	// Database config
 	config.Addr = "localhost:3306"
 	config.User = os.Getenv("DB_USER")
 	config.Passwd = os.Getenv("DB_PASS")
 	config.Net = "tcp"
-	config.DBName = ""
+	config.DBName = os.Getenv("DB_NAME")
 
 	db, err := sql.Open("mysql", config.FormatDSN())
 	if err != nil {
