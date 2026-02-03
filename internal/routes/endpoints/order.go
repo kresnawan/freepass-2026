@@ -1,13 +1,27 @@
 package endpoints
 
-import "github.com/gin-gonic/gin"
+import (
+	"canteen/internal/handlers"
+	"canteen/internal/middleware"
+
+	"github.com/gin-gonic/gin"
+)
 
 func OrderEndpointsGroup(rg *gin.RouterGroup) {
-	OrderEndpoint := rg.Group("/order")
+	/* Only for logged-in user */
+	CartEndpoint := rg.Group("/cart")
+	CartEndpoint.Use(middleware.UserAuth())
 	{
-		OrderEndpoint.POST("/place")
-		OrderEndpoint.POST("/:oid/pay")
-		OrderEndpoint.GET("/:oid")
+		CartEndpoint.GET("", handlers.GetCart)
+		CartEndpoint.POST("", handlers.AddToCart)
+	}
+
+	OrderEndpoint := rg.Group("/order")
+	OrderEndpoint.Use(middleware.UserAuth())
+	{
+		OrderEndpoint.GET("", handlers.GetMyOrder)
+		OrderEndpoint.POST("", handlers.PlaceOrder)
+		OrderEndpoint.POST("/pay")
 		OrderEndpoint.POST("/:oid/feedback")
 	}
 }
