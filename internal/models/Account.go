@@ -19,17 +19,3 @@ type Account struct {
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   time.Time  `json:"updated_at"`
 }
-
-type AdminProfile struct {
-	AccountId ulid.ULID `json:"account_id"`
-}
-
-type OwnerProfile struct {
-	AccountId ulid.ULID `json:"account_id"`
-}
-
-type CustomerProfile struct {
-	AccountId     ulid.ULID `json:"account_id"`
-	PhoneNumber   string    `json:"phone_number"`
-	CanteenPoints int       `json:"canteen_points"`
-}
