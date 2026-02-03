@@ -53,25 +53,6 @@ func GetCanteenOwnership(c *gin.Context)    {}
 func AddCanteenOwnership(c *gin.Context)    {}
 func DeleteCanteenOwnership(c *gin.Context) {}
 
-func CreateCanteenOwnerAccount(c *gin.Context) {
-	var acc models.Account
-
-	err := c.ShouldBindJSON(&acc)
-	if err != nil {
-		c.JSON(500, api.MakeResponse("Error", err.Error()))
-		c.Abort()
-		return
-	}
-
-	err = sql.InsertOwnerProfile(acc)
-	if err != nil {
-		c.JSON(500, api.MakeResponse("Error", err.Error()))
-		c.Abort()
-		return
-	}
-
-	c.JSON(200, api.MakeResponse("Owner account created", ""))
-}
 func EditCanteenOwnerAccount(c *gin.Context)   {}
 func DeleteCanteenOwnerAccount(c *gin.Context) {}
 

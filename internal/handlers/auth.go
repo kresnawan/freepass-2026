@@ -88,13 +88,13 @@ func Register(c *gin.Context) {
 	exist, err := sql.GetUsernameEmailExistence(acc.Username, acc.Email)
 
 	if err != nil {
-		c.String(404, "", err.Error())
+		c.String(404, err.Error())
 		c.Abort()
 		return
 	}
 
 	if !exist {
-		c.String(404, "", err.Error())
+		c.String(404, "Username or email have been used")
 		c.Abort()
 		return
 	}
@@ -102,7 +102,7 @@ func Register(c *gin.Context) {
 	err = sql.InsertCustomerProfile(acc)
 
 	if err != nil {
-		c.String(404, "", err.Error())
+		c.String(404, err.Error())
 		c.Abort()
 		return
 	}
