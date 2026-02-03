@@ -30,18 +30,6 @@ func CreateCanteen(c *gin.Context) {
 	c.JSON(200, api.MakeResponse("Success", "", 0, id))
 }
 
-func GetCanteen(c *gin.Context) {
-	result, err := sql.SelectCanteen()
-
-	if err != nil {
-		c.JSON(500, gin.H{"msg": err.Error()})
-		c.Abort()
-		return
-	}
-
-	c.JSON(200, result)
-}
-
 func DeleteCanteen(c *gin.Context) {
 	param := c.Param("cid")
 	res, err := sql.DeleteCanteen(param)
@@ -60,3 +48,31 @@ func DeleteCanteen(c *gin.Context) {
 
 	c.JSON(200, api.MakeResponse("Canteen successfully deleted", "", res))
 }
+
+func GetCanteenOwnership(c *gin.Context)    {}
+func AddCanteenOwnership(c *gin.Context)    {}
+func DeleteCanteenOwnership(c *gin.Context) {}
+
+func CreateCanteenOwnerAccount(c *gin.Context) {
+	var acc models.Account
+
+	err := c.ShouldBindJSON(&acc)
+	if err != nil {
+		c.JSON(500, api.MakeResponse("Error", err.Error()))
+		c.Abort()
+		return
+	}
+
+	err = sql.InsertOwnerProfile(acc)
+	if err != nil {
+		c.JSON(500, api.MakeResponse("Error", err.Error()))
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, api.MakeResponse("Owner account created", ""))
+}
+func EditCanteenOwnerAccount(c *gin.Context)   {}
+func DeleteCanteenOwnerAccount(c *gin.Context) {}
+
+func DisableCustomerAccount(c *gin.Context) {}
