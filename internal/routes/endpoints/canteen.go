@@ -11,23 +11,24 @@ func CanteenEndpointsGroup(rg *gin.RouterGroup) {
 	CanteenEndpoint := rg.Group("/canteen")
 	{
 		/* Public */
+		/* Get all canteen */
 		CanteenEndpoint.GET("", handlers.GetCanteen)
-		CanteenEndpoint.GET("/menu/:page")
-		CanteenEndpoint.GET("/:cid/menu")
-		CanteenEndpoint.GET("/:cid/feedback/:page")
+		CanteenEndpoint.GET("/menu/:page", handlers.GetAllMenu)
+		CanteenEndpoint.GET("/:cid/menu", handlers.GetAllMenuByCanteen)
+		CanteenEndpoint.GET("/:cid/feedback", handlers.GetCanteenFeedbacks)
 
 		/* Canteen owner */
 		OwnerField := CanteenEndpoint.Group("")
 		OwnerField.Use(middleware.OwnerAuth())
 		{
-			OwnerField.GET("/my")
-			OwnerField.POST("/:cid/menu")
-			OwnerField.PATCH("/:cid/menu/:id")
-			OwnerField.DELETE("/:cid/menu/:id")
-			OwnerField.GET("/:cid/order")
-			OwnerField.GET("/:cid/order/:oid")
+			OwnerField.GET("/my", handlers.GetOwnedCanteen)
+			OwnerField.POST("/:cid/menu", handlers.AddMenu)
+			OwnerField.PATCH("/:cid/menu/:id", handlers.EditMenu)
+			OwnerField.DELETE("/:cid/menu/:id", handlers.DeleteMenuById)
+			OwnerField.GET("/:cid/order", handlers.GetCanteenOrder)
+			OwnerField.GET("/:cid/order/:oid", handlers.GetCanteenOrderById)
 			OwnerField.PATCH("/:cid/order/:oid")
-			OwnerField.DELETE("/:cid/feedback/:fid")
+			OwnerField.DELETE("/:cid/feedback/:fid", handlers.DeleteFeedbackById)
 
 		}
 
@@ -36,10 +37,16 @@ func CanteenEndpointsGroup(rg *gin.RouterGroup) {
 		AdminField.Use(middleware.AdminAuth())
 		{
 			AdminField.POST("", handlers.CreateCanteen)
+
 			AdminField.DELETE("/:cid", handlers.DeleteCanteen)
 
-			AdminField.POST("/:cid/owner")
-			AdminField.GET("/:cid/owner")
+			AdminField.GET("/owner/account", handlers.GetOwnerAccount)
+			AdminField.POST("/owner/account", handlers.CreateOwnerAccount)
+
+			AdminField.GET("/owner", handlers.GetAllCanteenOwnership)
+
+			AdminField.POST("/:cid/owner/:uid") // Add ownership
+			AdminField.GET("/:cid/owner", handlers.GetCanteenOwner)
 
 			AdminField.GET("/:cid/owner/:oid")
 			AdminField.PUT("/:cid/owner/:oid")
