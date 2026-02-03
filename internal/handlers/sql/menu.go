@@ -1,16 +1,19 @@
 package sql
 
-import "canteen/internal/storage/mariadb"
+import (
+	"canteen/internal/models"
+	"canteen/internal/storage/mariadb"
+)
 
-func InsertMenu(cid string, menuName string, price int) (int64, error) {
+func InsertMenu(menu models.Menu) (int64, error) {
 	res, err := mariadb.Db.Exec(`
 		INSERT INTO
 			menu (canteen_id, menu_name, price)
 		VALUES
 			(?, ?, ?)`,
-		cid,
-		menuName,
-		price)
+		menu.CanteenId,
+		menu.MenuName,
+		menu.Price)
 
 	if err != nil {
 		return 0, err
@@ -72,4 +75,74 @@ func DeleteMenuById(mid string) (int64, error) {
 	}
 
 	return rowsAffected, err
+}
+
+func GetAllMenu() ([]models.Menu, error) {
+	var menus = make([]models.Menu, 0)
+
+	query := `
+		SELECT
+			*
+		FROM
+			menu
+	`
+
+	rows, err := mariadb.Db.Query(query)
+
+	if err != nil {
+		return menus, err
+	}
+
+	for rows.Next() {
+		var menu models.Menu
+		err := rows.Scan(
+			&menu.CanteenId,
+			&menu.MenuId,
+			&menu.MenuName,
+			&menu.Price,
+		)
+		if err != nil {
+			return menus, err
+		}
+
+		menus = append(menus, menu)
+	}
+
+	return menus, nil
+}
+
+func GetAllMenuByCanteen(cid string) ([]models.Menu, error) {
+	var menus = make([]models.Menu, 0)
+
+	query := `
+		SELECT
+			*
+		FROM
+			menu
+		WHERE
+			canteen_id = ?
+	`
+
+	rows, err := mariadb.Db.Query(query, cid)
+
+	if err != nil {
+		return menus, err
+	}
+
+	for rows.Next() {
+		var menu models.Menu
+		err := rows.Scan(
+			&menu.CanteenId,
+			&menu.MenuId,
+			&menu.MenuName,
+			&menu.Price,
+		)
+		if err != nil {
+			return menus, err
+		}
+
+		menus = append(menus, menu)
+	}
+
+	return menus, nil
 }

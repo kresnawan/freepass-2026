@@ -75,9 +75,8 @@ func DeleteCanteen(id string) (int64, error) {
 	return rows_affected, nil
 }
 
-func SelectOwnedCanteen(owid string) ([]models.Canteen, error) {
+func SelectOwnedCanteen(owid ulid.ULID) ([]models.Canteen, error) {
 	var canteen_array = make([]models.Canteen, 0)
-	parsedId, _ := ulid.Parse(owid)
 
 	rows, err := mariadb.Db.Query(`
 	SELECT 
@@ -90,7 +89,7 @@ func SelectOwnedCanteen(owid string) ([]models.Canteen, error) {
 		c.canteen_id = o.canteen_id
 	WHERE
 		o.owner_id = ?
-		`, parsedId)
+		`, owid)
 
 	if err != nil {
 		return canteen_array, err
