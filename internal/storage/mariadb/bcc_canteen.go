@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -20,6 +21,7 @@ func DbInit() *sql.DB {
 	config.Net = "tcp"
 	config.DBName = os.Getenv("DB_NAME")
 	config.ParseTime = true
+	config.Loc = time.UTC
 
 	db, err := sql.Open("mysql", config.FormatDSN())
 	if err != nil {
