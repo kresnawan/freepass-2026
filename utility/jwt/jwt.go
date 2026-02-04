@@ -27,7 +27,7 @@ func GenerateAccessToken(uid ulid.ULID, role string) (string, error) {
 		Role:      role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "bcc_canteen",
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 5)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 20)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
