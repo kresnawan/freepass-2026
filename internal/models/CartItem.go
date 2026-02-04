@@ -9,3 +9,8 @@ type CartItem struct {
 	Quantity     int       `json:"quantity"`
 	PricePerItem int       `json:"price_per_item"`
 }
+
+type CartItemOrder struct {
+	MenuId   int `json:"menu_id"`
+	Quantity int `json:"quantity"`
+}

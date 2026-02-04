@@ -4,15 +4,23 @@ import (
 	"canteen/internal/handlers/sql"
 	"canteen/internal/models"
 	"canteen/internal/storage/mariadb"
+	"canteen/utility"
 
 	"github.com/gin-gonic/gin"
-	"github.com/oklog/ulid/v2"
 )
 
 func AddToCart(c *gin.Context) {
 	var items []models.CartItem
+	uid, _ := c.Get("account_id")
 
-	err := c.ShouldBindJSON(&items)
+	parsedId, err := utility.AnyToUlid(uid)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	err = c.ShouldBindJSON(&items)
 
 	if err != nil {
 		c.String(500, err.Error())
@@ -30,8 +38,12 @@ func AddToCart(c *gin.Context) {
 
 	defer tx.Rollback()
 
-	for _, item := range items {
-		sql.CheckAndInsertToCart(tx, item)
+	err = sql.CheckAndInsertToCart(tx, items, parsedId)
+
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
 	}
 
 	err = tx.Commit()
@@ -40,20 +52,13 @@ func AddToCart(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
+	c.String(200, "Cart been updated")
 }
 
 func GetCart(c *gin.Context) {
 	uid, _ := c.Get("account_id")
-	s, ok := uid.(string)
-
-	if !ok {
-		c.String(500, "Any not string")
-		c.Abort()
-		return
-	}
-
-	parsedId, err := ulid.Parse(s)
-
+	parsedId, err := utility.AnyToUlid(uid)
 	if err != nil {
 		c.String(500, err.Error())
 		c.Abort()
@@ -69,4 +74,23 @@ func GetCart(c *gin.Context) {
 	}
 
 	c.JSON(200, items)
+}
+
+func DeleteCartItems(c *gin.Context) {
+	uid, _ := c.Get("account_id")
+	parsedId, err := utility.AnyToUlid(uid)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	err = sql.DeleteMyCartItems(parsedId)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	c.String(200, "Cart is now empty")
 }
