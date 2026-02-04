@@ -7,4 +7,6 @@ type CustomerProfile struct {
 	LastName      string `json:"last_name"`
 	PhoneNumber   string `json:"phone_number"`
 	CanteenPoints string `json:"canteen_points"`
+	Instagram     string `json:"instagram"`
+	Bio           string `json:"bio"`
 }
