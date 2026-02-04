@@ -2,16 +2,18 @@ package endpoints
 
 import (
 	"canteen/internal/handlers"
+	"canteen/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func UserEndpointsGroup(rg *gin.RouterGroup) {
 	UserEndpoint := rg.Group("/user")
+	UserEndpoint.Use(middleware.UserAuth())
 	{
 		UserEndpoint.GET("", handlers.GetUsers)
 		UserEndpoint.DELETE("/:uid", handlers.DeleteUser)
-		UserEndpoint.GET("/me/profile")
-		UserEndpoint.PUT("/me/profile/edit")
+		UserEndpoint.GET("/profile", handlers.GetMyProfile)
+		UserEndpoint.PATCH("/profile", handlers.ChangeMyProfile)
 	}
 }

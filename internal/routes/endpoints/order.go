@@ -14,6 +14,7 @@ func OrderEndpointsGroup(rg *gin.RouterGroup) {
 	{
 		CartEndpoint.GET("", handlers.GetCart)
 		CartEndpoint.POST("", handlers.AddToCart)
+		CartEndpoint.DELETE("", handlers.DeleteCartItems)
 	}
 
 	OrderEndpoint := rg.Group("/order")
@@ -21,7 +22,8 @@ func OrderEndpointsGroup(rg *gin.RouterGroup) {
 	{
 		OrderEndpoint.GET("", handlers.GetMyOrder)
 		OrderEndpoint.POST("", handlers.PlaceOrder)
-		OrderEndpoint.POST("/pay")
-		OrderEndpoint.POST("/:oid/feedback")
+		OrderEndpoint.POST("/:oid/pay", handlers.PayOrder)
+		OrderEndpoint.POST("/:oid/feedback", handlers.AddUserFeedback)
+		OrderEndpoint.GET("/:oid/feedback", handlers.GetMyOrderFeedback)
 	}
 }

@@ -13,7 +13,7 @@ func CanteenEndpointsGroup(rg *gin.RouterGroup) {
 		/* Public */
 		/* Get all canteen */
 		CanteenEndpoint.GET("", handlers.GetCanteen)
-		CanteenEndpoint.GET("/menu/:page", handlers.GetAllMenu)
+		CanteenEndpoint.GET("/menu", handlers.GetAllMenu)
 		CanteenEndpoint.GET("/:cid/menu", handlers.GetAllMenuByCanteen)
 		CanteenEndpoint.GET("/:cid/feedback", handlers.GetCanteenFeedbacks)
 
@@ -27,7 +27,7 @@ func CanteenEndpointsGroup(rg *gin.RouterGroup) {
 			OwnerField.DELETE("/:cid/menu/:id", handlers.DeleteMenuById)
 			OwnerField.GET("/:cid/order", handlers.GetCanteenOrder)
 			OwnerField.GET("/:cid/order/:oid", handlers.GetCanteenOrderById)
-			OwnerField.PATCH("/:cid/order/:oid")
+			OwnerField.PATCH("/:cid/order/:oid", handlers.UpdateOrderStatus)
 			OwnerField.DELETE("/:cid/feedback/:fid", handlers.DeleteFeedbackById)
 
 		}
@@ -45,7 +45,7 @@ func CanteenEndpointsGroup(rg *gin.RouterGroup) {
 
 			AdminField.GET("/owner", handlers.GetAllCanteenOwnership)
 
-			AdminField.POST("/:cid/owner/:uid") // Add ownership
+			AdminField.POST("/:cid/owner/:owid", handlers.AddOwnership) // Add ownership
 			AdminField.GET("/:cid/owner", handlers.GetCanteenOwner)
 
 			AdminField.GET("/:cid/owner/:oid")
