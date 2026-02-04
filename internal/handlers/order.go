@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/oklog/ulid/v2"
 )
 
 /*
@@ -85,5 +86,59 @@ func PlaceOrder(c *gin.Context) {
 		return
 	}
 
+	err = sql.DeleteMyCartItemsAfterOrder(parsedId, tx)
+
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
 	c.String(200, "Order placed")
+}
+
+func UpdateOrderStatus(c *gin.Context) {
+	oid := c.Param("oid")
+
+	parsedId, err := ulid.Parse(oid)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	err = sql.UpdateOrderStatus(parsedId)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	c.String(200, "Order status has been updated")
+}
+
+func PayOrder(c *gin.Context) {
+	oid := c.Param("oid")
+	parsedId, err := ulid.Parse(oid)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	err = sql.PayOrder(parsedId)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	c.String(200, "Payment successful")
 }

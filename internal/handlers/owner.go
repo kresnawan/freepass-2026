@@ -6,6 +6,7 @@ import (
 	"canteen/utility/api"
 
 	"github.com/gin-gonic/gin"
+	"github.com/oklog/ulid/v2"
 )
 
 func CreateOwnerAccount(c *gin.Context) {
@@ -29,7 +30,14 @@ func CreateOwnerAccount(c *gin.Context) {
 }
 
 func GetOwnerAccount(c *gin.Context) {
+	res, err := sql.SelectCanteenOwners()
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
 
+	c.JSON(200, res)
 }
 
 func GetAllCanteenOwnership(c *gin.Context) {
@@ -54,4 +62,25 @@ func GetCanteenOwner(c *gin.Context) {
 	}
 
 	c.JSON(200, res)
+}
+
+func AddOwnership(c *gin.Context) {
+	cid := c.Param("cid")
+	owid := c.Param("owid")
+
+	parsedId, err := ulid.Parse(owid)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	err = sql.InsertOwnership(cid, parsedId)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	c.String(200, "Ownership added")
 }

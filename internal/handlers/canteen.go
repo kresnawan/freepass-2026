@@ -44,7 +44,13 @@ func GetOwnedCanteen(c *gin.Context) {
 func GetCanteenOrder(c *gin.Context) {
 	cid := c.Param("cid")
 
-	orders, _ := sql.SelectOrderByCanteenId(cid)
+	orders, err := sql.SelectOrderByCanteenId(cid)
+
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
 
 	c.JSON(200, orders)
 }

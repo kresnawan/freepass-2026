@@ -110,3 +110,48 @@ func Register(c *gin.Context) {
 	c.String(200, "", "Success")
 
 }
+
+func GetAccessToken(c *gin.Context) {
+	refreshToken, err := c.Request.Cookie("refreshToken")
+
+	if err != nil {
+
+		if err == refreshToken.Valid() {
+			c.Data(http.StatusBadRequest, "", []byte("ERROR: Refresh token invalid"))
+			c.Abort()
+
+			return
+		}
+
+		c.Data(http.StatusBadRequest, "", []byte("ERROR: Refresh token not found"))
+		c.Abort()
+
+		return
+	}
+
+	token, _, err := jwt.VerifyRefreshToken(refreshToken.Value, &jwt.CustomClaims{})
+
+	if err != nil {
+		c.Data(http.StatusBadRequest, "", []byte("ERROR: Refresh token invalid"))
+		c.Abort()
+		return
+	}
+
+	claims := token.Claims.(*jwt.CustomClaims)
+
+	newAccessToken, err := jwt.GenerateAccessToken(claims.AccountId, claims.Role)
+
+	if err != nil {
+		c.Data(500, "", []byte("ERROR: Access token regeneration failed"))
+		c.Abort()
+
+		return
+	}
+
+	c.Data(200, "", []byte(newAccessToken))
+}
+
+func Logout(c *gin.Context) {
+	c.SetCookie("refreshToken", "", -1, "/", "localhost", false, true)
+	c.String(200, "Logged out")
+}

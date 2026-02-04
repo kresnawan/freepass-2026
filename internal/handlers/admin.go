@@ -48,12 +48,3 @@ func DeleteCanteen(c *gin.Context) {
 
 	c.JSON(200, api.MakeResponse("Canteen successfully deleted", "", res))
 }
-
-func GetCanteenOwnership(c *gin.Context)    {}
-func AddCanteenOwnership(c *gin.Context)    {}
-func DeleteCanteenOwnership(c *gin.Context) {}
-
-func EditCanteenOwnerAccount(c *gin.Context)   {}
-func DeleteCanteenOwnerAccount(c *gin.Context) {}
-
-func DisableCustomerAccount(c *gin.Context) {}
