@@ -15,6 +15,7 @@ func InsertCustomerProfile(acc models.Account) error {
 	}
 
 	defer tx.Rollback()
+	acc.Role = "customer"
 
 	err = InsertAccount(acc, tx, uid)
 
@@ -43,8 +44,7 @@ func InsertCustomerProfile(acc models.Account) error {
 	return nil
 }
 
-func GetCustomerProfile(uid string) (models.CustomerProfile, error) {
-	parsedId, _ := ulid.Parse(uid)
+func GetCustomerProfile(uid ulid.ULID) (models.CustomerProfile, error) {
 	var obj models.CustomerProfile
 
 	query := `
@@ -54,24 +54,26 @@ func GetCustomerProfile(uid string) (models.CustomerProfile, error) {
 			a.first_name,
 			a.last_name,
 			c.phone_number,
-			c.canteen_points
+			c.canteen_points,
+			c.instagram,
+			c.bio
 		FROM
 			accounts a
-		INNER JOIN
-			customer_profile c
-		ON
-			a.account_id = c.account_id
+		JOIN
+			customer_profile c ON a.account_id = c.account_id
 		WHERE
-			account_id = ?
+			a.account_id = ?
 	`
 
-	err := mariadb.Db.QueryRow(query, parsedId).Scan(
+	err := mariadb.Db.QueryRow(query, uid).Scan(
 		&obj.Username,
 		&obj.Email,
 		&obj.FirstName,
 		&obj.LastName,
 		&obj.PhoneNumber,
 		&obj.CanteenPoints,
+		&obj.Instagram,
+		&obj.Bio,
 	)
 
 	if err != nil {
@@ -79,4 +81,51 @@ func GetCustomerProfile(uid string) (models.CustomerProfile, error) {
 	}
 
 	return obj, nil
+}
+
+func UpdateUserProfile(uid ulid.ULID, profile models.CustomerProfile) error {
+	updateAccountQuery := `
+		UPDATE
+			account
+		SET
+			username = ?,
+			first_name = ?,
+			last_name = ?
+		WHERE
+			account_id = ?
+	`
+	updateProfileQuery := `
+		UPDATE
+			customer_profile
+		SET
+			phone_number = ?,
+			instagram = ?,
+			bio = ?
+		WHERE
+			account_id = ?
+	`
+
+	tx, err := mariadb.Db.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback()
+
+	_, err = tx.Exec(updateProfileQuery, profile.PhoneNumber, profile.Instagram, profile.Bio)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(updateAccountQuery, profile.Username, profile.FirstName, profile.LastName)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

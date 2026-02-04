@@ -82,7 +82,10 @@ func GetAllMenu() ([]models.Menu, error) {
 
 	query := `
 		SELECT
-			*
+			menu_id,
+			canteen_id,
+			menu_name,
+			price
 		FROM
 			menu
 	`
@@ -96,8 +99,8 @@ func GetAllMenu() ([]models.Menu, error) {
 	for rows.Next() {
 		var menu models.Menu
 		err := rows.Scan(
-			&menu.CanteenId,
 			&menu.MenuId,
+			&menu.CanteenId,
 			&menu.MenuName,
 			&menu.Price,
 		)

@@ -15,6 +15,7 @@ func InsertAdminProfile(acc models.Account) error {
 	}
 
 	defer tx.Rollback()
+	acc.Role = "admin"
 
 	err = InsertAccount(acc, tx, uid)
 
@@ -30,6 +31,12 @@ func InsertAdminProfile(acc models.Account) error {
 	`
 
 	_, err = tx.Exec(query, uid)
+
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
 
 	if err != nil {
 		return err
