@@ -1,7 +1,8 @@
-package handlers
+package public
 
 import (
 	"canteen/internal/handlers/sql"
+	"canteen/internal/handlers/sql/accounts"
 	"canteen/internal/models"
 	"canteen/internal/storage/mariadb"
 	"canteen/utility/jwt"
@@ -30,11 +31,11 @@ func Login(c *gin.Context) {
 		SELECT 
 			account_id, 
 			role,
-			password 
+			password
 		FROM 
 			accounts 
 		WHERE 
-			email = ? OR username = ?
+			(email = ? OR username = ?) AND is_active = 1
 	`
 
 	err := mariadb.Db.QueryRow(query, acc.Cred, acc.Cred).Scan(&accountId, &role, &passwd)
@@ -85,7 +86,7 @@ func Register(c *gin.Context) {
 
 	_ = c.ShouldBindJSON(&acc)
 
-	exist, err := sql.GetUsernameEmailExistence(acc.Username, acc.Email)
+	exist, err := accounts.GetUsernameEmailExistence(acc.Username, acc.Email)
 
 	if err != nil {
 		c.String(404, err.Error())

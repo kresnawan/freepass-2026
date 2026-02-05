@@ -1,4 +1,4 @@
-package handlers
+package customer
 
 import (
 	"canteen/internal/handlers/sql"
@@ -8,15 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-// import "github.com/gin-gonic/gin"
-
-// func MakeOrder(c *gin.Context) {}
-// func PayOrder(c *gin.Context)  {}
-
-// func GetMyOrder(c *gin.Context)   {}
-// func GetOrderById(c *gin.Context) {}
-// func GiveFeedback(c *gin.Context) {}
 
 func GetMyProfile(c *gin.Context) {
 	uid, _ := c.Get("account_id")

@@ -1,43 +1,53 @@
-package handlers
+package admin
 
 import (
 	"canteen/internal/handlers/sql"
 	"canteen/internal/models"
 	"canteen/utility/api"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oklog/ulid/v2"
 )
 
-func CreateOwnerAccount(c *gin.Context) {
-	var acc models.Account
+func CreateCanteen(c *gin.Context) {
+	var requestBody models.Canteen
+	err := c.ShouldBindJSON(&requestBody)
 
-	err := c.ShouldBindJSON(&acc)
 	if err != nil {
-		c.JSON(500, api.MakeResponse("Error", err.Error()))
+		c.String(http.StatusBadRequest, "", "Request body parsing failed")
 		c.Abort()
 		return
 	}
 
-	err = sql.InsertOwnerProfile(acc)
+	id, err := sql.AddCanteen(requestBody.Name)
+
 	if err != nil {
-		c.String(500, err.Error())
+		c.String(http.StatusInternalServerError, "", err.Error())
 		c.Abort()
 		return
 	}
 
-	c.JSON(200, api.MakeResponse("Owner account created", ""))
+	c.JSON(200, api.MakeResponse("Success", "", 0, id))
 }
 
-func GetOwnerAccount(c *gin.Context) {
-	res, err := sql.SelectCanteenOwners()
+func DeleteCanteen(c *gin.Context) {
+	param := c.Param("cid")
+	res, err := sql.DeleteCanteen(param)
+
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, gin.H{"msg": err.Error()})
 		c.Abort()
 		return
 	}
 
-	c.JSON(200, res)
+	if res == 0 {
+		c.JSON(404, api.MakeResponse("Canteen not found", "", res))
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, api.MakeResponse("Canteen successfully deleted", "", res))
 }
 
 func GetAllCanteenOwnership(c *gin.Context) {
@@ -66,9 +76,18 @@ func GetCanteenOwner(c *gin.Context) {
 
 func AddOwnership(c *gin.Context) {
 	cid := c.Param("cid")
-	owid := c.Param("owid")
 
-	parsedId, err := ulid.Parse(owid)
+	var reqBody struct {
+		OwnerId string `json:"owner_id"`
+	}
+
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		c.Abort()
+		return
+	}
+
+	parsedId, err := ulid.Parse(reqBody.OwnerId)
 	if err != nil {
 		c.String(500, err.Error())
 		c.Abort()

@@ -1,10 +1,11 @@
-package handlers
+package customer
 
 import (
 	"canteen/internal/handlers/sql"
 	"canteen/internal/models"
 	"canteen/internal/storage/mariadb"
 	"canteen/utility"
+	"canteen/utility/cart"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,6 +29,8 @@ func AddToCart(c *gin.Context) {
 		return
 	}
 
+	itemsMerged := cart.MergeCartItem(items)
+
 	tx, err := mariadb.Db.Begin()
 
 	if err != nil {
@@ -38,7 +41,7 @@ func AddToCart(c *gin.Context) {
 
 	defer tx.Rollback()
 
-	err = sql.CheckAndInsertToCart(tx, items, parsedId)
+	err = sql.CheckAndInsertToCart(tx, itemsMerged, parsedId)
 
 	if err != nil {
 		c.String(500, err.Error())
