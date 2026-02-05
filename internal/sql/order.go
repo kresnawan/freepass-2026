@@ -2,6 +2,7 @@ package sql
 
 import (
 	"canteen/internal/models"
+	"canteen/internal/sql/utility"
 	"canteen/internal/storage/mariadb"
 	"database/sql"
 	"errors"
@@ -163,7 +164,12 @@ func SelectMyOrder(uid ulid.ULID) ([]models.OrderClean, error) {
 }
 
 func InsertOrder(customerId ulid.ULID, canteenId int, tx *sql.Tx) (ulid.ULID, error) {
-	oid := ulid.Make()
+	oid, err := utility.GetUnusedId("order_id", "order")
+
+	if err != nil {
+		return oid, nil
+	}
+
 	query := `
 		INSERT INTO 
 			` + "`order`" + ` 
@@ -171,7 +177,7 @@ func InsertOrder(customerId ulid.ULID, canteenId int, tx *sql.Tx) (ulid.ULID, er
 		VALUES 
 			(?, ?, ?)
 	`
-	_, err := tx.Exec(query, oid, customerId, canteenId)
+	_, err = tx.Exec(query, oid, customerId, canteenId)
 	if err != nil {
 		return oid, err
 	}

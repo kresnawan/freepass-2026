@@ -20,6 +20,10 @@ func InitRoute() {
 		endpoints.AuthEndpointsGroup(v1Endpoint)
 		endpoints.OrderEndpointsGroup(v1Endpoint)
 		endpoints.CanteenEndpointsGroup(v1Endpoint)
+		endpoints.CartEndpointsGroup(v1Endpoint)
+		endpoints.FeedbackEndpointsGroup(v1Endpoint)
+		endpoints.MenuEndpointsGroup(v1Endpoint)
+		endpoints.OwnerEndpointsGroup(v1Endpoint)
 	}
 
 	if err := route.Run(); err != nil {

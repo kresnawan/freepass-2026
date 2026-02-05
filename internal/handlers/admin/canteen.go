@@ -3,7 +3,6 @@ package admin
 import (
 	"canteen/internal/models"
 	"canteen/internal/sql"
-	"canteen/utility/api"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +19,7 @@ func CreateCanteen(c *gin.Context) {
 		return
 	}
 
-	id, err := sql.AddCanteen(requestBody.Name)
+	_, err = sql.AddCanteen(requestBody.Name)
 
 	if err != nil {
 		c.String(http.StatusInternalServerError, "", err.Error())
@@ -28,7 +27,7 @@ func CreateCanteen(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, api.MakeResponse("Success", "", 0, id))
+	c.String(200, "Success")
 }
 
 func DeleteCanteen(c *gin.Context) {
@@ -42,12 +41,12 @@ func DeleteCanteen(c *gin.Context) {
 	}
 
 	if res == 0 {
-		c.JSON(404, api.MakeResponse("Canteen not found", "", res))
+		c.String(404, "Not found")
 		c.Abort()
 		return
 	}
 
-	c.JSON(200, api.MakeResponse("Canteen successfully deleted", "", res))
+	c.String(200, "Success")
 }
 
 func GetAllCanteenOwnership(c *gin.Context) {
@@ -102,4 +101,34 @@ func AddOwnership(c *gin.Context) {
 	}
 
 	c.String(200, "Ownership added")
+}
+
+func DeleteOwnership(c *gin.Context) {
+	cid := c.Param("cid")
+
+	var reqBody struct {
+		OwnerId string `json:"owner_id"`
+	}
+
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		c.Abort()
+		return
+	}
+
+	parsedId, err := ulid.Parse(reqBody.OwnerId)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	err = sql.DeleteOwnership(cid, parsedId)
+	if err != nil {
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+
+	c.String(200, "Ownership removed")
 }

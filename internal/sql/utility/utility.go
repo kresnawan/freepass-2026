@@ -1,6 +1,13 @@
 package utility
 
-import "strings"
+import (
+	"canteen/internal/storage/mariadb"
+	"database/sql"
+	"fmt"
+	"strings"
+
+	"github.com/oklog/ulid/v2"
+)
 
 func PrepareMultipleInsert(canteenID []byte, userIDs []int) (string, []any) {
 	var placeholders []string
@@ -21,4 +28,23 @@ func GeneratePlaceholders(n int) string {
 		return ""
 	}
 	return strings.Repeat("?,", n-1) + "?"
+}
+
+func GetUnusedId(column string, table string) (ulid.ULID, error) {
+	var uid ulid.ULID = ulid.Make()
+	var tempId ulid.ULID
+
+	query := fmt.Sprintf("SELECT %s FROM `%s` WHERE %s = ?", column, table, column)
+
+	for {
+		err := mariadb.Db.QueryRow(query, uid).Scan(&tempId)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return uid, nil
+			} else {
+				return tempId, err
+			}
+		}
+	}
+
 }

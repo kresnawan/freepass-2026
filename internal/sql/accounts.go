@@ -135,7 +135,15 @@ func GetAccounts() ([]models.Account, error) {
 
 	query := `
 		SELECT
-			*
+			account_id,
+			username,
+			email,
+			first_name,
+			last_name,
+			role,
+			is_active,
+			created_at,
+			updated_at
 		FROM
 			accounts
 	`
@@ -154,10 +162,8 @@ func GetAccounts() ([]models.Account, error) {
 			&account.Email,
 			&account.FirstName,
 			&account.LastName,
-			&account.Password,
 			&account.Role,
 			&account.IsActive,
-			&account.DeactivedAt,
 			&account.CreatedAt,
 			&account.UpdatedAt,
 		)

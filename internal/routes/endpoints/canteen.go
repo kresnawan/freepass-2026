@@ -35,6 +35,7 @@ func CanteenEndpointsGroup(rg *gin.RouterGroup) {
 			AdminField.DELETE("/:cid", admin.DeleteCanteen)
 			AdminField.GET("/owner", admin.GetAllCanteenOwnership)
 			AdminField.POST("/:cid/owner", admin.AddOwnership)
+			AdminField.DELETE("/:cid/owner", admin.DeleteOwnership)
 			AdminField.GET("/:cid/owner", admin.GetCanteenOwner)
 
 		}

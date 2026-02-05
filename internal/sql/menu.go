@@ -3,6 +3,7 @@ package sql
 import (
 	"canteen/internal/models"
 	"canteen/internal/storage/mariadb"
+	"canteen/utility/api"
 	"database/sql"
 	"errors"
 
@@ -89,7 +90,7 @@ func DeleteMenuById(mid string) error {
 	return err
 }
 
-func GetAllMenu() ([]models.Menu, error) {
+func GetAllMenu() ([]models.Menu, *api.Error) {
 	var menus = make([]models.Menu, 0)
 
 	query := `
@@ -110,7 +111,7 @@ func GetAllMenu() ([]models.Menu, error) {
 	rows, err := mariadb.Db.Query(query)
 
 	if err != nil {
-		return menus, err
+		return menus, api.MakeError("GetAllMenu error on query", 500)
 	}
 
 	for rows.Next() {
@@ -123,7 +124,7 @@ func GetAllMenu() ([]models.Menu, error) {
 			&menu.Stock,
 		)
 		if err != nil {
-			return menus, err
+			return menus, api.MakeError("GetAllMenu error when parsing data", 500)
 		}
 
 		menus = append(menus, menu)

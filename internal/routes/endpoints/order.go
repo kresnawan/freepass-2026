@@ -11,13 +11,15 @@ import (
 func OrderEndpointsGroup(rg *gin.RouterGroup) {
 	OrderEndpoint := rg.Group("/order")
 	{
+		OrderEndpoint.GET("/:oid", customer.GetOrderDetails)
+
 		CustomerField := OrderEndpoint.Group("")
 		CustomerField.Use(middleware.UserAuth())
 		CustomerField.Use(middleware.CheckCustomerOwnership())
 		{
 			CustomerField.GET("", customer.GetMyOrder)
 			CustomerField.POST("", customer.PlaceOrder)
-			CustomerField.GET("/:oid", customer.GetOrderDetails)
+
 			CustomerField.POST("/:oid/pay", customer.PayOrder)
 			CustomerField.POST("/:oid/feedback", customer.AddUserFeedback)
 		}
@@ -26,7 +28,7 @@ func OrderEndpointsGroup(rg *gin.RouterGroup) {
 		OwnerField.Use(middleware.OwnerAuth())
 		OwnerField.Use(middleware.CheckOwnerOwnership())
 		{
-			OwnerField.GET("/:oid", owner.GetCanteenOrderById)
+			// OwnerField.GET("/:oid", owner.GetCanteenOrderById)
 			OwnerField.PATCH("/:oid", owner.UpdateOrderStatus)
 		}
 	}

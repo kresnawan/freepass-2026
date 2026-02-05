@@ -2,6 +2,7 @@ package public
 
 import (
 	"canteen/internal/sql"
+	"canteen/utility/api"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,12 +23,12 @@ func GetAllMenu(c *gin.Context) {
 	res, err := sql.GetAllMenu()
 
 	if err != nil {
-		c.String(500, err.Error())
+		c.String(500, err.Msg)
 		c.Abort()
 		return
 	}
 
-	c.JSON(200, res)
+	c.JSON(200, api.MakeResponse(1, "", res))
 }
 
 func GetAllMenuByCanteen(c *gin.Context) {

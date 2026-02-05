@@ -67,7 +67,7 @@ func UpdateOwnerProfile(uid ulid.ULID, profile models.OwnerProfileForEdit) error
 	`
 	updateProfileQuery := `
 		UPDATE
-			customer_profile
+			owner_profile
 		SET
 			phone_number = ?
 		WHERE
@@ -81,7 +81,7 @@ func UpdateOwnerProfile(uid ulid.ULID, profile models.OwnerProfileForEdit) error
 
 	defer tx.Rollback()
 
-	_, err = tx.Exec(updateProfileQuery, profile.PhoneNumber)
+	_, err = tx.Exec(updateProfileQuery, profile.PhoneNumber, uid)
 	if err != nil {
 		return err
 	}

@@ -12,10 +12,10 @@ type Account struct {
 	Email       string     `json:"email"`
 	FirstName   string     `json:"first_name"`
 	LastName    string     `json:"last_name"`
-	Password    string     `json:"password"`
+	Password    string     `json:"password,omitempty"`
 	Role        string     `json:"role"`
 	IsActive    bool       `json:"is_active"`
-	DeactivedAt *time.Time `json:"deactived_at"`
+	DeactivedAt *time.Time `json:"deactived_at,omitempty"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   time.Time  `json:"updated_at"`
 }

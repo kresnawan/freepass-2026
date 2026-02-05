@@ -209,7 +209,8 @@ func SelectCanteenOwner(cid string) ([]models.OwnerProfile, error) {
 			acc.email,
 			acc.first_name,
 			acc.last_name,
-			acc.role
+			acc.role,
+			op.phone_number
 		FROM
 			canteen_ownership co
 		JOIN
@@ -235,6 +236,7 @@ func SelectCanteenOwner(cid string) ([]models.OwnerProfile, error) {
 			&owner.FirstName,
 			&owner.LastName,
 			&owner.Role,
+			&owner.PhoneNumber,
 		); err != nil {
 			return owners, err
 		}
@@ -254,6 +256,22 @@ func InsertOwnership(cid string, uid ulid.ULID) error {
 			(?, ?)
 	`
 	_, err := mariadb.Db.Exec(query, uid, cid)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteOwnership(cid string, uid ulid.ULID) error {
+	query := `
+		DELETE FROM
+			canteen_ownership
+		WHERE
+			canteen_id = ? AND owner_id = ?
+	`
+	_, err := mariadb.Db.Exec(query, cid, uid)
 
 	if err != nil {
 		return err

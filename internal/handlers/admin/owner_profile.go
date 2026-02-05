@@ -3,7 +3,6 @@ package admin
 import (
 	"canteen/internal/models"
 	"canteen/internal/sql"
-	"canteen/utility/api"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +14,7 @@ func CreateOwnerAccount(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&acc)
 	if err != nil {
-		c.JSON(500, api.MakeResponse("Error", err.Error()))
+		c.String(500, err.Error())
 		c.Abort()
 		return
 	}
@@ -27,7 +26,7 @@ func CreateOwnerAccount(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, api.MakeResponse("Owner account created", ""))
+	c.String(200, "Success")
 }
 
 func GetOwnerAccount(c *gin.Context) {
