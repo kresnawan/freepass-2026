@@ -4,55 +4,112 @@ import (
 	"canteen/internal/models"
 	"canteen/internal/storage/mariadb"
 	"database/sql"
-	"time"
 
 	"github.com/oklog/ulid/v2"
 )
 
-type CanteenOwnership struct {
-	OwnerId     ulid.ULID `json:"owner_id"`
-	CanteenId   int       `json:"canteen_id"`
-	OwnerName   string    `json:"owner_name"`
-	CanteenName string    `json:"canteen_name"`
-	OwnedAt     time.Time `json:"owned_at"`
+func AddCanteen(name string) (int64, error) {
+	res, err := mariadb.Db.Exec(`
+	INSERT INTO 
+		canteen (name) 
+	VALUES (?)`, name)
+
+	if err != nil {
+		return 0, err
+	}
+
+	inserted_id, err := res.LastInsertId()
+
+	if err != nil {
+		return 0, err
+	}
+
+	return inserted_id, nil
 }
 
-func InsertOwnerProfile(acc models.Account) error {
-	var uid ulid.ULID = ulid.Make()
-	tx, err := mariadb.Db.Begin()
-	if err != nil {
-		return err
-	}
-
-	defer tx.Rollback()
-	acc.Role = "owner"
-
-	err = InsertAccount(acc, tx, uid)
+func SelectCanteen() ([]models.Canteen, error) {
+	var canteen_array = make([]models.Canteen, 0)
+	rows, err := mariadb.Db.Query(`
+	SELECT 
+		canteen_id, 
+		name 
+	FROM 
+		canteen`)
 
 	if err != nil {
-		return err
+		return canteen_array, err
 	}
 
-	query := `
-		INSERT INTO
-			owner_profile (account_id)
-		VALUES
-			(?)
-	`
+	for rows.Next() {
+		var canteen models.Canteen
+		if err := rows.Scan(&canteen.Canteen_id, &canteen.Name); err != nil {
+			return canteen_array, err
+		}
 
-	_, err = tx.Exec(query, uid)
+		canteen_array = append(canteen_array, canteen)
+	}
+
+	if err := rows.Err(); err != nil {
+		return canteen_array, err
+	}
+
+	return canteen_array, nil
+}
+
+func DeleteCanteen(id string) (int64, error) {
+	res, err := mariadb.Db.Exec(`
+	DELETE FROM 
+		canteen 
+	WHERE 
+		canteen_id = ?`, id)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	err = tx.Commit()
+	rows_affected, err := res.RowsAffected()
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return rows_affected, nil
+}
+
+func SelectOwnedCanteen(owid ulid.ULID) ([]models.Canteen, error) {
+	var canteen_array = make([]models.Canteen, 0)
+
+	rows, err := mariadb.Db.Query(`
+	SELECT 
+		c.*
+	FROM 
+		canteen c
+	INNER JOIN
+		canteen_ownership o
+	ON
+		c.canteen_id = o.canteen_id
+	WHERE
+		o.owner_id = ?
+		`, owid)
+
+	if err != nil {
+		return canteen_array, err
+	}
+
+	for rows.Next() {
+		var canteen models.Canteen
+		if err := rows.Scan(&canteen.Canteen_id, &canteen.Name); err != nil {
+			return canteen_array, err
+		}
+
+		canteen_array = append(canteen_array, canteen)
+	}
+
+	if err := rows.Err(); err != nil {
+		return canteen_array, err
+	}
+
+	return canteen_array, nil
 }
 
 func SelectAllCanteenOwnership() ([]CanteenOwnership, error) {

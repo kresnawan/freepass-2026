@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"canteen/internal/handlers/sql/accounts"
+	"canteen/internal/sql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oklog/ulid/v2"
@@ -16,7 +16,7 @@ func DeactiveAccount(c *gin.Context) {
 		return
 	}
 
-	err = accounts.DeactiveAccount(parsedUid)
+	err = sql.DeactiveAccount(parsedUid)
 	if err != nil {
 		c.String(500, err.Error())
 		c.Abort()
@@ -27,7 +27,7 @@ func DeactiveAccount(c *gin.Context) {
 }
 
 func GetAllAccounts(c *gin.Context) {
-	res, err := accounts.GetAccounts()
+	res, err := sql.GetAccounts()
 
 	if err != nil {
 		c.String(500, "", err.Error())

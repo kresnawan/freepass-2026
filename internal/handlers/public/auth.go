@@ -1,9 +1,8 @@
 package public
 
 import (
-	"canteen/internal/handlers/sql"
-	"canteen/internal/handlers/sql/accounts"
 	"canteen/internal/models"
+	"canteen/internal/sql"
 	"canteen/internal/storage/mariadb"
 	"canteen/utility/jwt"
 	"net/http"
@@ -86,7 +85,7 @@ func Register(c *gin.Context) {
 
 	_ = c.ShouldBindJSON(&acc)
 
-	exist, err := accounts.GetUsernameEmailExistence(acc.Username, acc.Email)
+	exist, err := sql.GetUsernameEmailExistence(acc.Username, acc.Email)
 
 	if err != nil {
 		c.String(404, err.Error())

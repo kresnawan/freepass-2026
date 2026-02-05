@@ -1,7 +1,7 @@
 package owner
 
 import (
-	"canteen/internal/handlers/sql"
+	"canteen/internal/sql"
 	"fmt"
 	"net/http"
 

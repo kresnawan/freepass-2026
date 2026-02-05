@@ -1,7 +1,7 @@
 package public
 
 import (
-	"canteen/internal/handlers/sql"
+	"canteen/internal/sql"
 
 	"github.com/gin-gonic/gin"
 )

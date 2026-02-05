@@ -83,10 +83,10 @@ func GetCustomerProfile(uid ulid.ULID) (models.CustomerProfile, error) {
 	return obj, nil
 }
 
-func UpdateUserProfile(uid ulid.ULID, profile models.CustomerProfile) error {
+func UpdateCustomerProfile(uid ulid.ULID, profile models.CustomerProfile) error {
 	updateAccountQuery := `
 		UPDATE
-			account
+			accounts
 		SET
 			username = ?,
 			first_name = ?,
@@ -112,12 +112,12 @@ func UpdateUserProfile(uid ulid.ULID, profile models.CustomerProfile) error {
 
 	defer tx.Rollback()
 
-	_, err = tx.Exec(updateProfileQuery, profile.PhoneNumber, profile.Instagram, profile.Bio)
+	_, err = tx.Exec(updateProfileQuery, profile.PhoneNumber, profile.Instagram, profile.Bio, uid)
 	if err != nil {
 		return err
 	}
 
-	_, err = tx.Exec(updateAccountQuery, profile.Username, profile.FirstName, profile.LastName)
+	_, err = tx.Exec(updateAccountQuery, profile.Username, profile.FirstName, profile.LastName, uid)
 	if err != nil {
 		return err
 	}

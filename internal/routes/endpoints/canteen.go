@@ -1,7 +1,9 @@
 package endpoints
 
 import (
-	"canteen/internal/handlers"
+	"canteen/internal/handlers/admin"
+	"canteen/internal/handlers/owner"
+	"canteen/internal/handlers/public"
 	"canteen/internal/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -10,47 +12,31 @@ import (
 func CanteenEndpointsGroup(rg *gin.RouterGroup) {
 	CanteenEndpoint := rg.Group("/canteen")
 	{
-		/* Public */
-		/* Get all canteen */
-		CanteenEndpoint.GET("", handlers.GetCanteen)
-		CanteenEndpoint.GET("/menu", handlers.GetAllMenu)
-		CanteenEndpoint.GET("/:cid/menu", handlers.GetAllMenuByCanteen)
-		CanteenEndpoint.GET("/:cid/feedback", handlers.GetCanteenFeedbacks)
 
-		/* Canteen owner */
+		CanteenEndpoint.GET("", public.GetCanteen)
+		CanteenEndpoint.GET("/:cid/menu", public.GetAllMenuByCanteen)
+		CanteenEndpoint.GET("/:cid/feedback", public.GetCanteenFeedbacks)
+
 		OwnerField := CanteenEndpoint.Group("")
 		OwnerField.Use(middleware.OwnerAuth())
+		OwnerField.Use(middleware.CheckOwnerOwnership())
 		{
-			OwnerField.GET("/my", handlers.GetOwnedCanteen)
-			OwnerField.POST("/:cid/menu", handlers.AddMenu)
-			OwnerField.PATCH("/:cid/menu/:id", handlers.EditMenu)
-			OwnerField.DELETE("/:cid/menu/:id", handlers.DeleteMenuById)
-			OwnerField.GET("/:cid/order", handlers.GetCanteenOrder)
-			OwnerField.GET("/:cid/order/:oid", handlers.GetCanteenOrderById)
-			OwnerField.PATCH("/:cid/order/:oid", handlers.UpdateOrderStatus)
-			OwnerField.DELETE("/:cid/feedback/:fid", handlers.DeleteFeedbackById)
+			OwnerField.GET("/my", owner.GetOwnedCanteen)
+			OwnerField.POST("/:cid/menu", owner.AddMenu)
+			OwnerField.GET("/:cid/order", owner.GetCanteenOrder)
+			OwnerField.DELETE("/feedback/:fid", owner.DeleteFeedbackById)
 
 		}
 
-		/* Admin */
 		AdminField := CanteenEndpoint.Group("")
 		AdminField.Use(middleware.AdminAuth())
 		{
-			AdminField.POST("", handlers.CreateCanteen)
+			AdminField.POST("", admin.CreateCanteen)
+			AdminField.DELETE("/:cid", admin.DeleteCanteen)
+			AdminField.GET("/owner", admin.GetAllCanteenOwnership)
+			AdminField.POST("/:cid/owner", admin.AddOwnership)
+			AdminField.GET("/:cid/owner", admin.GetCanteenOwner)
 
-			AdminField.DELETE("/:cid", handlers.DeleteCanteen)
-
-			AdminField.GET("/owner/account", handlers.GetOwnerAccount)
-			AdminField.POST("/owner/account", handlers.CreateOwnerAccount)
-
-			AdminField.GET("/owner", handlers.GetAllCanteenOwnership)
-
-			AdminField.POST("/:cid/owner/:owid", handlers.AddOwnership) // Add ownership
-			AdminField.GET("/:cid/owner", handlers.GetCanteenOwner)
-
-			AdminField.GET("/:cid/owner/:oid")
-			AdminField.PUT("/:cid/owner/:oid")
-			AdminField.DELETE("/:cid/owner/:oid")
 		}
 	}
 

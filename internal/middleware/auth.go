@@ -1,10 +1,8 @@
 package middleware
 
 import (
-	"canteen/internal/handlers/sql"
 	"canteen/utility/jwt"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -65,7 +63,6 @@ func UserAuth() gin.HandlerFunc {
 func OwnerAuth() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		cid := c.Param("cid")
 
 		authHeader := c.Request.Header.Get("Authorization")
 		if authHeader == "" {
@@ -107,28 +104,6 @@ func OwnerAuth() gin.HandlerFunc {
 			c.String(http.StatusForbidden, "Your role do not have permission to access this")
 			c.Abort()
 			return
-		}
-
-		if cid != "" {
-			parsedCanteenId, err := strconv.Atoi(cid)
-			if err != nil {
-				c.String(http.StatusInternalServerError, err.Error())
-				c.Abort()
-				return
-			}
-
-			isOwned, err := sql.CheckOwnership(claims.AccountId, parsedCanteenId)
-			if err != nil {
-				c.String(http.StatusInternalServerError, err.Error())
-				c.Abort()
-				return
-			}
-
-			if !isOwned {
-				c.String(http.StatusForbidden, "You do not own this canteen")
-				c.Abort()
-				return
-			}
 		}
 
 		c.Set("account_id", claims.AccountId.String())

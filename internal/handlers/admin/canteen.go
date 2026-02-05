@@ -1,8 +1,8 @@
 package admin
 
 import (
-	"canteen/internal/handlers/sql"
 	"canteen/internal/models"
+	"canteen/internal/sql"
 	"canteen/utility/api"
 	"net/http"
 

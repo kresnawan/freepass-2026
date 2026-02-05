@@ -6,7 +6,7 @@ type CustomerProfile struct {
 	FirstName     string `json:"first_name"`
 	LastName      string `json:"last_name"`
 	PhoneNumber   string `json:"phone_number"`
-	CanteenPoints string `json:"canteen_points"`
+	CanteenPoints int    `json:"canteen_points"`
 	Instagram     string `json:"instagram"`
 	Bio           string `json:"bio"`
 }

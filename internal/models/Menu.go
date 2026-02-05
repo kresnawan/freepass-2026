@@ -5,4 +5,5 @@ type Menu struct {
 	CanteenId int    `json:"canteen_id"`
 	MenuName  string `json:"menu_name"`
 	Price     int    `json:"price"`
+	Stock     int    `json:"stock"`
 }

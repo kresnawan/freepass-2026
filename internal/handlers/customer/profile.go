@@ -1,8 +1,8 @@
 package customer
 
 import (
-	"canteen/internal/handlers/sql"
 	"canteen/internal/models"
+	"canteen/internal/sql"
 	"canteen/utility"
 	"net/http"
 
@@ -47,7 +47,7 @@ func ChangeMyProfile(c *gin.Context) {
 		return
 	}
 
-	err = sql.UpdateUserProfile(parsedUid, reqBody)
+	err = sql.UpdateCustomerProfile(parsedUid, reqBody)
 
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())

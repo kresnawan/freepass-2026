@@ -1,7 +1,7 @@
 package owner
 
 import (
-	"canteen/internal/handlers/sql"
+	"canteen/internal/sql"
 	"canteen/utility"
 	"canteen/utility/api"
 

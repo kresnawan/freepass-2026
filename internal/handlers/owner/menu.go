@@ -1,8 +1,8 @@
 package owner
 
 import (
-	"canteen/internal/handlers/sql"
 	"canteen/internal/models"
+	"canteen/internal/sql"
 	"net/http"
 	"strconv"
 

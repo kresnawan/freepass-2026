@@ -2,6 +2,7 @@ package sql
 
 import (
 	"canteen/internal/models"
+	"canteen/internal/sql/utility"
 	"canteen/internal/storage/mariadb"
 	"database/sql"
 	"errors"
@@ -16,6 +17,7 @@ func SelectMyCart(uid ulid.ULID) ([]models.CartItem, error) {
 
 	query := `
 		SELECT
+			account_id,
 			canteen_id,
 			menu_id,
 			quantity,
@@ -35,6 +37,7 @@ func SelectMyCart(uid ulid.ULID) ([]models.CartItem, error) {
 	for rows.Next() {
 		var item models.CartItem
 		err := rows.Scan(
+			&item.AccountId,
 			&item.CanteenId,
 			&item.MenuId,
 			&item.Quantity,
@@ -48,29 +51,6 @@ func SelectMyCart(uid ulid.ULID) ([]models.CartItem, error) {
 	}
 
 	return cart, nil
-}
-
-func PrepareMultipleInsert(canteenID []byte, userIDs []int) (string, []any) {
-	var placeholders []string
-	var args []any
-
-	for _, id := range userIDs {
-		// Setiap baris memiliki 2 kolom: (canteen_id, user_id)
-		placeholders = append(placeholders, "(?, ?)")
-		args = append(args, canteenID, id)
-	}
-
-	// Menggabungkan slice menjadi string: "(?, ?), (?, ?)"
-	queryValues := strings.Join(placeholders, ", ")
-
-	return queryValues, args
-}
-
-func GeneratePlaceholders(n int) string {
-	if n <= 0 {
-		return ""
-	}
-	return strings.Repeat("?,", n-1) + "?"
 }
 
 func CheckAndInsertToCart(tx *sql.Tx, items []models.CartItem, uid ulid.ULID) error {
@@ -95,7 +75,7 @@ func CheckAndInsertToCart(tx *sql.Tx, items []models.CartItem, uid ulid.ULID) er
 		FROM
 			menu
 		WHERE menu_id IN (%s)
-	`, GeneratePlaceholders(len(items)))
+	`, utility.GeneratePlaceholders(len(items)))
 
 	args := make([]any, len(items))
 
@@ -125,8 +105,14 @@ func CheckAndInsertToCart(tx *sql.Tx, items []models.CartItem, uid ulid.ULID) er
 		if item.CanteenId != currentUserCanteen {
 			return errors.New("Every item must from the same canteen")
 		}
+
+		err := CheckMenuStock(item.MenuId, item.Quantity)
+		if err != nil {
+			str := fmt.Sprintf("The menu %d is currently has less stock than your request", item.MenuId)
+			return errors.New(str)
+		}
 	}
-	fmt.Printf("Check valid, go to InsertToCart\n")
+
 	err = InsertToCart(tx, items, uid)
 	if err != nil {
 		return err

@@ -1,29 +1,33 @@
 package endpoints
 
 import (
-	"canteen/internal/handlers"
+	"canteen/internal/handlers/customer"
+	"canteen/internal/handlers/owner"
 	"canteen/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func OrderEndpointsGroup(rg *gin.RouterGroup) {
-	/* Only for logged-in user */
-	CartEndpoint := rg.Group("/cart")
-	CartEndpoint.Use(middleware.UserAuth())
-	{
-		CartEndpoint.GET("", handlers.GetCart)
-		CartEndpoint.POST("", handlers.AddToCart)
-		CartEndpoint.DELETE("", handlers.DeleteCartItems)
-	}
-
 	OrderEndpoint := rg.Group("/order")
-	OrderEndpoint.Use(middleware.UserAuth())
 	{
-		OrderEndpoint.GET("", handlers.GetMyOrder)
-		OrderEndpoint.POST("", handlers.PlaceOrder)
-		OrderEndpoint.POST("/:oid/pay", handlers.PayOrder)
-		OrderEndpoint.POST("/:oid/feedback", handlers.AddUserFeedback)
-		OrderEndpoint.GET("/:oid/feedback", handlers.GetMyOrderFeedback)
+		CustomerField := OrderEndpoint.Group("")
+		CustomerField.Use(middleware.UserAuth())
+		CustomerField.Use(middleware.CheckCustomerOwnership())
+		{
+			CustomerField.GET("", customer.GetMyOrder)
+			CustomerField.POST("", customer.PlaceOrder)
+			CustomerField.GET("/:oid", customer.GetOrderDetails)
+			CustomerField.POST("/:oid/pay", customer.PayOrder)
+			CustomerField.POST("/:oid/feedback", customer.AddUserFeedback)
+		}
+
+		OwnerField := OrderEndpoint.Group("")
+		OwnerField.Use(middleware.OwnerAuth())
+		OwnerField.Use(middleware.CheckOwnerOwnership())
+		{
+			OwnerField.GET("/:oid", owner.GetCanteenOrderById)
+			OwnerField.PATCH("/:oid", owner.UpdateOrderStatus)
+		}
 	}
 }

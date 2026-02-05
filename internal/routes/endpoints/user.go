@@ -1,7 +1,8 @@
 package endpoints
 
 import (
-	"canteen/internal/handlers"
+	"canteen/internal/handlers/admin"
+	"canteen/internal/handlers/customer"
 	"canteen/internal/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -9,11 +10,21 @@ import (
 
 func UserEndpointsGroup(rg *gin.RouterGroup) {
 	UserEndpoint := rg.Group("/user")
-	UserEndpoint.Use(middleware.UserAuth())
 	{
-		UserEndpoint.GET("", handlers.GetUsers)
-		UserEndpoint.DELETE("/:uid", handlers.DeleteUser)
-		UserEndpoint.GET("/profile", handlers.GetMyProfile)
-		UserEndpoint.PATCH("/profile", handlers.ChangeMyProfile)
+		CustomerField := UserEndpoint.Group("")
+		CustomerField.Use(middleware.UserAuth())
+		{
+			CustomerField.GET("/profile", customer.GetMyProfile)
+			CustomerField.PATCH("/profile", customer.ChangeMyProfile)
+		}
+
+		AdminField := rg.Group("/user")
+		AdminField.Use(middleware.AdminAuth())
+		{
+			AdminField.PATCH("/:uid")
+			AdminField.GET("", admin.GetAllAccounts)
+			AdminField.DELETE("/:uid", admin.DeactiveAccount)
+		}
 	}
+
 }

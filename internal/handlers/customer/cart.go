@@ -1,8 +1,8 @@
 package customer
 
 import (
-	"canteen/internal/handlers/sql"
 	"canteen/internal/models"
+	"canteen/internal/sql"
 	"canteen/internal/storage/mariadb"
 	"canteen/utility"
 	"canteen/utility/cart"

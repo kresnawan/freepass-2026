@@ -10,3 +10,10 @@ type OwnerProfile struct {
 	LastName  string    `json:"last_name"`
 	Role      string    `json:"role"`
 }
+
+type OwnerProfileForEdit struct {
+	Username    string `json:"username"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	PhoneNumber string `json:"phone_number"`
+}

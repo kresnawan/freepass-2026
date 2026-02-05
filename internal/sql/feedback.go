@@ -3,6 +3,7 @@ package sql
 import (
 	"canteen/internal/models"
 	"canteen/internal/storage/mariadb"
+	"database/sql"
 	"errors"
 
 	"github.com/oklog/ulid/v2"
@@ -150,4 +151,46 @@ func GetMyOrderFeedback(cusid ulid.ULID) ([]models.Feedback, error) {
 	}
 
 	return feedbacks, nil
+}
+
+func DeleteFeedback(fid string) error {
+	query := `
+		DELETE FROM
+			feedback
+		WHERE
+			feedback_id = ?
+	`
+
+	_, err := mariadb.Db.Exec(query, fid)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CheckFeedbackOwnership(fid int, uid ulid.ULID) (bool, error) {
+	query := `
+		SELECT
+			o.order_id
+		FROM
+			feedback f
+		JOIN
+			` + "`order`" + ` o ON f.order_id = o.order_id
+		JOIN
+			canteen_ownership co ON co.canteen_id = o.canteen_id
+		WHERE
+			f.feedback_id = ? AND co.owner_id = ?
+	`
+	var canteenId ulid.ULID
+	err := mariadb.Db.QueryRow(query, fid, uid).Scan(&canteenId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		} else {
+			return false, err
+		}
+	}
+
+	return true, nil
 }
