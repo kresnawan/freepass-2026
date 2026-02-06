@@ -5,6 +5,7 @@ import (
 	"canteen/internal/storage/mariadb"
 	"database/sql"
 	"errors"
+	"strconv"
 
 	"github.com/oklog/ulid/v2"
 )
@@ -17,8 +18,14 @@ type PublicFeedback struct {
 	Star             int    `json:"star"`
 }
 
-func SelectCanteenFeedback(cid string) ([]PublicFeedback, error) {
+func SelectCanteenFeedback(cid string, page string) ([]PublicFeedback, error) {
 	var feedbacks = make([]PublicFeedback, 0)
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		return feedbacks, err
+	}
+
 	query := `
 		SELECT
 			f.feedback_id,
@@ -36,9 +43,12 @@ func SelectCanteenFeedback(cid string) ([]PublicFeedback, error) {
 			accounts acc ON acc.account_id = o.customer_id
 		WHERE
 			o.canteen_id = ?
-
+		LIMIT
+			10
+		OFFSET
+			?
 	`
-	res, err := mariadb.Db.Query(query, cid)
+	res, err := mariadb.Db.Query(query, cid, ((pageInt - 1) * 10))
 	if err != nil {
 		return feedbacks, err
 	}

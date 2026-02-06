@@ -4,6 +4,7 @@ import (
 	"canteen/internal/models"
 	"canteen/internal/storage/mariadb"
 	"database/sql"
+	"strconv"
 	"time"
 
 	"github.com/alexedwards/argon2id"
@@ -130,8 +131,13 @@ func DeleteAccount(uid string) error {
 	return nil
 }
 
-func GetAccounts() ([]models.Account, error) {
+func GetAccounts(page string) ([]models.Account, error) {
 	var accounts = make([]models.Account, 0)
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		return accounts, err
+	}
 
 	query := `
 		SELECT
@@ -146,9 +152,12 @@ func GetAccounts() ([]models.Account, error) {
 			updated_at
 		FROM
 			accounts
+		LIMIT
+			10
+		OFFSET ?
 	`
 
-	rows, err := mariadb.Db.Query(query)
+	rows, err := mariadb.Db.Query(query, ((pageInt - 1) * 10))
 
 	if err != nil {
 		return accounts, err

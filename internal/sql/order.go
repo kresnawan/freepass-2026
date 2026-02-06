@@ -7,14 +7,19 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/oklog/ulid/v2"
 )
 
-func SelectOrderByCanteenId(cid string) ([]models.OrderClean, error) {
+func SelectOrderByCanteenId(cid string, status string, page string) ([]models.OrderClean, error) {
 	var orders []models.OrderClean = make([]models.OrderClean, 0)
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		return orders, err
+	}
 
 	rows, err := mariadb.Db.Query(`
 	SELECT 
@@ -36,8 +41,12 @@ func SelectOrderByCanteenId(cid string) ([]models.OrderClean, error) {
 	FROM 
 		`+"`order`"+`
 	WHERE
-		canteen_id = ?	
-	`, cid)
+		canteen_id = ? AND status = ?
+	LIMIT 
+		10
+	OFFSET
+		?
+	`, cid, status, ((pageInt - 1) * 10))
 
 	if err != nil {
 		return orders, err
@@ -109,31 +118,40 @@ func SelectOrderById(oid ulid.ULID) (models.OrderClean, error) {
 	return order, nil
 }
 
-func SelectMyOrder(uid ulid.ULID) ([]models.OrderClean, error) {
+func SelectMyOrder(uid ulid.ULID, status string, page string) ([]models.OrderClean, error) {
 	var orders []models.OrderClean = make([]models.OrderClean, 0)
 
-	rows, err := mariadb.Db.Query(`
-	SELECT 
-		order_id,
-		customer_id,
-		canteen_id,
-		
-		CASE
-			WHEN status = 6 THEN 'Waiting payment'
-			WHEN status = 7 THEN 'Cooking'
-			WHEN status = 8 THEN 'Ready'
-			WHEN status = 9 THEN 'Completed'
-			ELSE ''
-		END AS status,
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		return orders, err
+	}
 
-		is_paid,
-		paid_at,
-		created_at
-	FROM 
-		`+"`order`"+`
-	WHERE
-		customer_id = ?	
-	`, uid)
+	rows, err := mariadb.Db.Query(`
+		SELECT 
+			order_id,
+			customer_id,
+			canteen_id,
+		
+			CASE
+				WHEN status = 6 THEN 'Waiting payment'
+				WHEN status = 7 THEN 'Cooking'
+				WHEN status = 8 THEN 'Ready'
+				WHEN status = 9 THEN 'Completed'
+				ELSE ''
+				END AS status,
+
+			is_paid,
+			paid_at,
+			created_at
+		FROM 
+			`+"`order`"+`
+		WHERE
+			customer_id = ? AND status = ?
+		LIMIT
+			10
+		OFFSET
+			?
+	`, uid, status, ((pageInt - 1) * 10))
 
 	if err != nil {
 		return orders, err

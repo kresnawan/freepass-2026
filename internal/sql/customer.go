@@ -2,18 +2,13 @@ package sql
 
 import (
 	"canteen/internal/models"
-	"canteen/internal/sql/utility"
 	"canteen/internal/storage/mariadb"
 
 	"github.com/oklog/ulid/v2"
 )
 
 func InsertCustomerProfile(acc models.Account) error {
-	uid, err := utility.GetUnusedId("account_id", "accounts")
-
-	if err != nil {
-		return err
-	}
+	var uid ulid.ULID = ulid.Make()
 	tx, err := mariadb.Db.Begin()
 	if err != nil {
 		return err

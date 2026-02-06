@@ -3,9 +3,9 @@ package sql
 import (
 	"canteen/internal/models"
 	"canteen/internal/storage/mariadb"
-	"canteen/utility/api"
 	"database/sql"
 	"errors"
+	"strconv"
 
 	"github.com/oklog/ulid/v2"
 )
@@ -90,8 +90,13 @@ func DeleteMenuById(mid string) error {
 	return err
 }
 
-func GetAllMenu() ([]models.Menu, *api.Error) {
+func GetAllMenu(page string) ([]models.Menu, error) {
 	var menus = make([]models.Menu, 0)
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		return menus, err
+	}
 
 	query := `
 		SELECT
@@ -106,12 +111,16 @@ func GetAllMenu() ([]models.Menu, *api.Error) {
 			menu_stock ms ON ms.menu_id = m.menu_id
 		WHERE
 			m.is_removed = 0
+		LIMIT
+			10
+		OFFSET
+			?
 	`
 
-	rows, err := mariadb.Db.Query(query)
+	rows, err := mariadb.Db.Query(query, ((pageInt - 1) * 10))
 
 	if err != nil {
-		return menus, api.MakeError("GetAllMenu error on query", 500)
+		return menus, err
 	}
 
 	for rows.Next() {
@@ -124,7 +133,7 @@ func GetAllMenu() ([]models.Menu, *api.Error) {
 			&menu.Stock,
 		)
 		if err != nil {
-			return menus, api.MakeError("GetAllMenu error when parsing data", 500)
+			return menus, err
 		}
 
 		menus = append(menus, menu)
@@ -133,8 +142,13 @@ func GetAllMenu() ([]models.Menu, *api.Error) {
 	return menus, nil
 }
 
-func GetAllMenuByCanteen(cid string) ([]models.Menu, error) {
+func GetAllMenuByCanteen(cid string, page string) ([]models.Menu, error) {
 	var menus = make([]models.Menu, 0)
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		return menus, err
+	}
 
 	query := `
 		SELECT
@@ -149,9 +163,13 @@ func GetAllMenuByCanteen(cid string) ([]models.Menu, error) {
 			menu_stock ms ON ms.menu_id = m.menu_id
 		WHERE
 			m.is_removed = 0 AND m.canteen_id = ?
+		LIMIT
+			10
+		OFFSET
+			?
 	`
 
-	rows, err := mariadb.Db.Query(query, cid)
+	rows, err := mariadb.Db.Query(query, cid, ((pageInt - 1) * 10))
 
 	if err != nil {
 		return menus, err

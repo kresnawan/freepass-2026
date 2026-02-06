@@ -1,9 +1,7 @@
 package mariadb
 
 import (
-	"canteen/internal/env"
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -12,10 +10,15 @@ import (
 )
 
 func DbInit() *sql.DB {
-	env.InitEnv()
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Printf("Environment variables loaded")
 	config := mysql.NewConfig()
+	var db *sql.DB
+	var err error
 
-	config.Addr = "localhost:3306"
+	config.Addr = os.Getenv("DB_HOST")
 	config.User = os.Getenv("DB_USER")
 	config.Passwd = os.Getenv("DB_PASS")
 	config.Net = "tcp"
@@ -23,17 +26,20 @@ func DbInit() *sql.DB {
 	config.ParseTime = true
 	config.Loc = time.UTC
 
-	db, err := sql.Open("mysql", config.FormatDSN())
-	if err != nil {
-		log.Fatal(err)
+	for i := 0; i < 10; i++ {
+		db, err = sql.Open("mysql", config.FormatDSN())
+		err = db.Ping()
+
+		if err != nil {
+			log.Println("Connection failed, retrying..")
+		} else {
+			log.Println("Connected to MariaDB")
+			break
+		}
+
+		time.Sleep(3 * time.Second)
 	}
 
-	pingErr := db.Ping()
-	if pingErr != nil {
-		log.Fatal(pingErr)
-	}
-
-	fmt.Printf("Connection with database %s established\n", os.Getenv("DB_NAME"))
 	return db
 }
 

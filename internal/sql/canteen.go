@@ -4,6 +4,7 @@ import (
 	"canteen/internal/models"
 	"canteen/internal/storage/mariadb"
 	"database/sql"
+	"strconv"
 
 	"github.com/oklog/ulid/v2"
 )
@@ -27,14 +28,25 @@ func AddCanteen(name string) (int64, error) {
 	return inserted_id, nil
 }
 
-func SelectCanteen() ([]models.Canteen, error) {
+func SelectCanteen(page string) ([]models.Canteen, error) {
 	var canteen_array = make([]models.Canteen, 0)
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		return canteen_array, err
+	}
+
 	rows, err := mariadb.Db.Query(`
-	SELECT 
-		canteen_id, 
-		name 
-	FROM 
-		canteen`)
+		SELECT 
+			canteen_id, 
+			name 
+		FROM 
+			canteen
+		LIMIT
+			10
+		OFFSET
+			?
+	`, ((pageInt - 1) * 10))
 
 	if err != nil {
 		return canteen_array, err
