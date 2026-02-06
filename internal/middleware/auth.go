@@ -32,12 +32,18 @@ func proceedToken(c *gin.Context) *jwt.CustomClaims {
 		switch code {
 		case 242:
 			c.JSON(http.StatusUnauthorized, api.MakeResponse(0, "Token expired", nil))
+			c.Abort()
+			return nil
 
 		case 243:
 			c.JSON(http.StatusUnauthorized, api.MakeResponse(0, "Token verification failed", nil))
+			c.Abort()
+			return nil
 
 		case 244:
 			c.JSON(http.StatusUnauthorized, api.MakeResponse(0, "Token invalid", nil))
+			c.Abort()
+			return nil
 		}
 
 		c.Abort()
@@ -109,7 +115,6 @@ func AdminAuth() gin.HandlerFunc {
 
 		claims := proceedToken(c)
 		if claims == nil {
-			c.JSON(500, api.MakeResponse(0, "Error when proceeding JWT", nil))
 			c.Abort()
 			return
 		}

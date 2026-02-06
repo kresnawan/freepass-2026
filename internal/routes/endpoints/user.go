@@ -24,6 +24,7 @@ func UserEndpointsGroup(rg *gin.RouterGroup) {
 			AdminField.PATCH("/:uid")
 			AdminField.GET("", admin.GetAllAccounts)
 			AdminField.DELETE("/:uid", admin.DeactiveAccount)
+			AdminField.PUT("/:uid", admin.ReactivateAccount)
 		}
 	}
 

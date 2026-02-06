@@ -109,8 +109,10 @@ func GetAllMenu(page string) ([]models.Menu, error) {
 			menu m
 		JOIN
 			menu_stock ms ON ms.menu_id = m.menu_id
+		JOIN
+			canteen c ON c.canteen_id = m.canteen_id
 		WHERE
-			m.is_removed = 0
+			m.is_removed = 0 AND c.is_active = 1
 		LIMIT
 			10
 		OFFSET
@@ -161,8 +163,10 @@ func GetAllMenuByCanteen(cid string, page string) ([]models.Menu, error) {
 			menu m
 		JOIN
 			menu_stock ms ON ms.menu_id = m.menu_id
+		JOIN
+			canteen c ON c.canteen_id = m.canteen_id
 		WHERE
-			m.is_removed = 0 AND m.canteen_id = ?
+			m.is_removed = 0 AND m.canteen_id = ? AND c.is_active = 1
 		LIMIT
 			10
 		OFFSET

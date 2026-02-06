@@ -42,6 +42,8 @@ func SelectCanteen(page string) ([]models.Canteen, error) {
 			name 
 		FROM 
 			canteen
+		WHERE
+			is_active = 1
 		LIMIT
 			10
 		OFFSET
@@ -69,16 +71,44 @@ func SelectCanteen(page string) ([]models.Canteen, error) {
 }
 
 func DeleteCanteen(id string) (int64, error) {
-	res, err := mariadb.Db.Exec(`
-	DELETE FROM 
+	tx, err := mariadb.Db.Begin()
+
+	if err != nil {
+		return 0, err
+	}
+
+	defer tx.Rollback()
+
+	res, err := tx.Exec(`
+	UPDATE
 		canteen 
-	WHERE 
+	SET
+		is_active = 0
+	WHERE
 		canteen_id = ?`, id)
 
 	if err != nil {
 		return 0, err
 	}
 
+	query := `
+		DELETE FROM
+			canteen_ownership
+		WHERE
+			canteen_id = ?
+	`
+
+	_, err = tx.Exec(query, id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	err = tx.Commit()
+
+	if err != nil {
+		return 0, err
+	}
 	rows_affected, err := res.RowsAffected()
 
 	if err != nil {
@@ -86,6 +116,43 @@ func DeleteCanteen(id string) (int64, error) {
 	}
 
 	return rows_affected, nil
+}
+
+func ReactivateCanteen(id string) error {
+	tx, err := mariadb.Db.Begin()
+
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback()
+
+	query := `
+		UPDATE
+			canteen 
+		SET
+			is_active = 1
+		WHERE
+			canteen_id = ?
+	`
+
+	_, err = tx.Exec(query, id)
+
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+
+	if err != nil {
+		return err
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func SelectOwnedCanteen(owid ulid.ULID) ([]models.Canteen, error) {

@@ -85,44 +85,17 @@ func DeactiveAccount(uid ulid.ULID) error {
 	return nil
 }
 
-func DeleteAccount(uid string) error {
-	parsedId, _ := ulid.Parse(uid)
-	tx, err := mariadb.Db.Begin()
-
-	if err != nil {
-		return err
-	}
-
-	defer tx.Rollback()
-
-	deleteProfile := `
-		DELETE FROM
-			customer_profile
-		WHERE
-			account_id = ?
-	`
-
-	deleteAccount := `
-		DELETE FROM
+func ReactivateAccount(uid ulid.ULID) error {
+	query := `
+		UPDATE
 			accounts
+		SET
+			is_active = 1
 		WHERE
 			account_id = ?
-
 	`
 
-	_, err = tx.Exec(deleteProfile, parsedId)
-
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(deleteAccount, parsedId)
-
-	if err != nil {
-		return err
-	}
-
-	err = tx.Commit()
+	_, err := mariadb.Db.Exec(query, uid)
 
 	if err != nil {
 		return err

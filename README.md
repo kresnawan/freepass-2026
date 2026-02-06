@@ -34,9 +34,10 @@ $ go build -o bcc-canteen ./cmd/api
 $ ./bcc-canteen
 ```
 ## API Testing
-To test or having a look on the endpoints, you can either access the online Postman workspace: 
+To test or having a look on the endpoints, you can either access the online Postman workspace: <br>
 [https://www.postman.com/kresnawan1/bcc-canteen](https://www.postman.com/kresnawan1/bcc-canteen) <br>
-or import the collection JSONs in `docs/`. Here are some decent information about the API
+or import the collection JSONs in `docs/`. <br>
+Here are some decent information about the API
 > [!CAUTION]
 > All requests require `url` environment variable and some requires `access_token` environment variables for the authentication. Also, some endpoints have query params and path variable, so pay attention to those.
 

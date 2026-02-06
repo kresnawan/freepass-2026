@@ -48,7 +48,7 @@ LOCK TABLES `accounts` WRITE;
 /*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `accounts` VALUES (0x019C262CC97ABF8E7083520CC60EB8BE,'root','root@root.com','','','$argon2id$v=19$m=65536,t=1,p=12$NhqNYBNCS+y8Ucspn0qOfA$fcDNbYg8evXhfQ1HjvdQ4ymW8zudDHjYWKu96sW7Jbo','admin',1,NULL,'2026-02-04 01:03:15','2026-02-04 01:03:15');
-INSERT INTO `accounts` VALUES (0x019C32045EC36EF2AF5D836D98E26930,'pakrose','pakrose@gmail.com','Pak','Rose','$argon2id$v=19$m=65536,t=1,p=12$OT6Ns/k68AiymkzVjKYXNg$rsvJH5Xn78DdSosCp/Pzy0n07XNvKOt3gNNj74Dg1i0','owner',1,NULL,'2026-02-06 08:14:33','2026-02-06 08:14:33');
+INSERT INTO `accounts` VALUES (0x019C32045EC36EF2AF5D836D98E26930,'pakrose','pakrose@gmail.com','Pak','Rose','$argon2id$v=19$m=65536,t=1,p=12$OT6Ns/k68AiymkzVjKYXNg$rsvJH5Xn78DdSosCp/Pzy0n07XNvKOt3gNNj74Dg1i0','owner',1,'2026-02-06 05:16:23','2026-02-06 08:14:33','2026-02-06 12:17:02');
 INSERT INTO `accounts` VALUES (0x019C3204DE58C9130417A40EBA6878D9,'burose','burose@gmail.com','Bu','Rose','$argon2id$v=19$m=65536,t=1,p=12$H2XCgcbGVdL/yuXQv58g+A$NYgnL0yNY/fFPeQV8ZjXrJr+Cxi6+hbKjkzfv2o9src','owner',1,NULL,'2026-02-06 08:15:05','2026-02-06 08:15:05');
 INSERT INTO `accounts` VALUES (0x019C3205598865E7A561197A8EAEEAFC,'bambang','bambang@gmail.com','Bambang','Pamungkas','$argon2id$v=19$m=65536,t=1,p=12$E22IAkupS0VciljCNVAaDw$hUd0MQnNQ7ljJlKy8GF2ve1BNjeZluRYXjYqzOwtxxE','owner',1,NULL,'2026-02-06 08:15:37','2026-02-06 08:15:37');
 INSERT INTO `accounts` VALUES (0x019C3205AED5CEE4B42CDC1DC7B9628B,'tukiran','tukiran@gmail.com','Tukiran','Solikin','$argon2id$v=19$m=65536,t=1,p=12$TFHi4DXdQ3SSIXhXgVpTdw$ViWG/5zXfYBdG7FW2rBI5pjfJVh3Gxf4rirZrnyPH9Y','owner',1,NULL,'2026-02-06 08:15:59','2026-02-06 08:15:59');
@@ -92,8 +92,9 @@ DROP TABLE IF EXISTS `canteen`;
 CREATE TABLE `canteen` (
   `canteen_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`canteen_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -103,9 +104,9 @@ CREATE TABLE `canteen` (
 LOCK TABLES `canteen` WRITE;
 /*!40000 ALTER TABLE `canteen` DISABLE KEYS */;
 set autocommit=0;
-INSERT INTO `canteen` VALUES (11,'Warung Lalapan Pak Bambang');
-INSERT INTO `canteen` VALUES (12,'Geprek Kak Rose');
-INSERT INTO `canteen` VALUES (13,'Kedai Ayam Goreng Tukiran');
+INSERT INTO `canteen` VALUES (11,'Warung Lalapan Pak Bambang',1);
+INSERT INTO `canteen` VALUES (12,'Geprek Kak Rose',1);
+INSERT INTO `canteen` VALUES (13,'Kedai Ayam Goreng Tukiran',1);
 /*!40000 ALTER TABLE `canteen` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -135,10 +136,10 @@ CREATE TABLE `canteen_ownership` (
 LOCK TABLES `canteen_ownership` WRITE;
 /*!40000 ALTER TABLE `canteen_ownership` DISABLE KEYS */;
 set autocommit=0;
-INSERT INTO `canteen_ownership` VALUES (0x019C32045EC36EF2AF5D836D98E26930,12,'2026-02-06 08:16:35');
-INSERT INTO `canteen_ownership` VALUES (0x019C3204DE58C9130417A40EBA6878D9,12,'2026-02-06 08:17:00');
 INSERT INTO `canteen_ownership` VALUES (0x019C3205598865E7A561197A8EAEEAFC,11,'2026-02-06 08:17:48');
 INSERT INTO `canteen_ownership` VALUES (0x019C3205AED5CEE4B42CDC1DC7B9628B,13,'2026-02-06 08:18:19');
+INSERT INTO `canteen_ownership` VALUES (0x019C3204DE58C9130417A40EBA6878D9,12,'2026-02-06 12:15:19');
+INSERT INTO `canteen_ownership` VALUES (0x019C32045EC36EF2AF5D836D98E26930,12,'2026-02-06 12:15:38');
 /*!40000 ALTER TABLE `canteen_ownership` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -400,4 +401,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-02-06 15:35:08
+-- Dump completed on 2026-02-06 19:21:40

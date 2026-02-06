@@ -46,7 +46,20 @@ func DeleteCanteen(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, api.MakeResponse(1, "Canteen deleted", nil))
+	c.JSON(200, api.MakeResponse(1, "Canteen deactivated", nil))
+}
+
+func ReactivateCanteen(c *gin.Context) {
+	param := c.Param("cid")
+	err := sql.ReactivateCanteen(param)
+
+	if err != nil {
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, api.MakeResponse(1, "Canteen reactivated", nil))
 }
 
 func GetAllCanteenOwnership(c *gin.Context) {
