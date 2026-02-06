@@ -1,0 +1,145 @@
+{
+	"info": {
+		"_postman_id": "80667bcf-bfa3-49d2-85f9-4bba40471541",
+		"name": "public",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17573798",
+		"_collection_link": "https://www.postman.com/kresnawan1/workspace/bcc-canteen/collection/17573798-80667bcf-bfa3-49d2-85f9-4bba40471541?action=share&source=collection_link&creator=17573798"
+	},
+	"item": [
+		{
+			"name": "Get a canteen's menu",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/canteen/:canteen_id/menu?page=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"canteen",
+						":canteen_id",
+						"menu"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					],
+					"variable": [
+						{
+							"key": "canteen_id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all menu",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/v1/menu?page=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"menu"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all canteen",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/v1/canteen?page=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"canteen"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a canteen's feedback",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/v1/canteen/:canteen_id/feedback?page=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"canteen",
+						":canteen_id",
+						"feedback"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					],
+					"variable": [
+						{
+							"key": "canteen_id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,391 @@
+{
+	"info": {
+		"_postman_id": "34d5c97c-a9b0-4609-9900-f7b2e61ae4e0",
+		"name": "admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17573798",
+		"_collection_link": "https://www.postman.com/kresnawan1/workspace/bcc-canteen/collection/17573798-34d5c97c-a9b0-4609-9900-f7b2e61ae4e0?action=share&source=collection_link&creator=17573798"
+	},
+	"item": [
+		{
+			"name": "Add new canteen",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Canteen Anti-Mainstream\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/canteen",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"canteen"
+					]
+				},
+				"description": "Add new canteen entity"
+			},
+			"response": []
+		},
+		{
+			"name": "Remove canteen",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/v1/canteen/:canteen_id",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"canteen",
+						":canteen_id"
+					],
+					"variable": [
+						{
+							"key": "canteen_id",
+							"value": "6"
+						}
+					]
+				},
+				"description": "Remove a canteen"
+			},
+			"response": []
+		},
+		{
+			"name": "Get all owner accounts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/v1/owner",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"owner"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add owner account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"username\",\n    \"email\": \"user@gmail.com\",\n    \"first_name\": \"User\",\n    \"last_name\": \"Name\",\n    \"password\": \"passwd123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/owner",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"owner"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit owner profile",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"owuser\",\n    \"first_name\": \"Name\",\n    \"last_name\": \"Name\",\n    \"phone_number\": \"081234567890\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/owner/:owner_id",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"owner",
+						":owner_id"
+					],
+					"variable": [
+						{
+							"key": "owner_id",
+							"value": "01KGPMPSQAE221ZC4YN8DDB2AT"
+						}
+					]
+				},
+				"description": "Careful when editing profiles, cause it replaces the entire column in the body"
+			},
+			"response": []
+		},
+		{
+			"name": "Get all canteen ownership",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/v1/canteen/owner",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"canteen",
+						"owner"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add canteen ownership",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"owner_id\": \"01KGPMPSQAE221ZC4YN8DDB2AT\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/canteen/:canteen_id/owner",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"canteen",
+						":canteen_id",
+						"owner"
+					],
+					"variable": [
+						{
+							"key": "canteen_id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove canteen ownership",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"owner_id\": \"01KGPMPSQAE221ZC4YN8DDB2AT\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/canteen/:canteen_id/owner",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"canteen",
+						":canteen_id",
+						"owner"
+					],
+					"variable": [
+						{
+							"key": "canteen_id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a canteen's owner",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/v1/canteen/:canteen_id/owner",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"canteen",
+						":canteen_id",
+						"owner"
+					],
+					"variable": [
+						{
+							"key": "canteen_id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get accounts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/v1/user?page=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"user"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Return all registered accounts which still active"
+			},
+			"response": []
+		},
+		{
+			"name": "Deactive account",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"cred\": \"kresnawan\",\n    \"password\": \"kres123\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/user/:account_id",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"user",
+						":account_id"
+					],
+					"variable": [
+						{
+							"key": "account_id",
+							"value": "01KGK907HZMHJPSP2FXNES1A59"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
