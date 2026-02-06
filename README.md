@@ -1,8 +1,5 @@
 # BCC Canteen
 
-## Usage
-You can either deploy it on your local environment or use the mirror on fp26.kresnawan.com
-
 ## API Installation
 
 Here is how to run the service in your local environment<br>
