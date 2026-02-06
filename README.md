@@ -2,7 +2,7 @@
 
 ## API Installation
 
-Here is how to run the service in your local environment<br>
+Here is how to run the service in your local environment.<br>
 
 ### 1. Using Docker (recommended)
 In the project's root directory run:
@@ -15,9 +15,9 @@ $ docker-compose up --build
    - Go v1.25
    - MariaDB
    
-Run `db/init.sql` and `db/dml.sql` with your favourite tool for the table and dummy data (The init will make a new database automatically, so be careful for the naming conflict)<br>
+Create new database and run `db/init.sql` with your favourite tool for the table and dummy data.<br>
 
-Copy variables in `.env.example` and create an `.env` file in the project's root directory, then match the variables with your environment. Make sure that the variables' name left unchanged<br>
+Copy variables in `.env.example` and create an `.env` file in the project's root directory, then match the variables with your environment. Make sure that the variables' name left unchanged.<br>
 
 In `internal/storage/mariadb/bcc_canteen.go`, untag these lines:
 ```Go
@@ -40,7 +40,7 @@ $ ./bcc-canteen
 ## API Testing
 To test or having a look on the endpoints, you can either access the online Postman workspace: <br>
 [https://www.postman.com/kresnawan1/bcc-canteen](https://www.postman.com/kresnawan1/bcc-canteen) <br>
-or import the collection JSONs in `docs/`. <br>
+or import the collections JSON in [docs](https://github.com/kresnawan/freepass-2026/tree/kresnawan/docs). <br>
 
 > [!CAUTION]
 > All requests require `url` environment variable and some requires `access_token` environment variables for the authentication. Also, some endpoints have query params and path variable, so pay attention to those.
