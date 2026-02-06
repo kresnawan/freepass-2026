@@ -1,6 +1,7 @@
 package public
 
 import (
+	"canteen/internal/middleware"
 	"canteen/internal/models"
 	"canteen/internal/sql"
 	"canteen/internal/storage/mariadb"
@@ -14,6 +15,13 @@ import (
 )
 
 func Login(c *gin.Context) {
+
+	isLoggedIn := middleware.CheckIfLoggedIn(c)
+	if isLoggedIn {
+		c.JSON(http.StatusConflict, api.MakeResponse(0, "You already logged in", nil))
+		c.Abort()
+		return
+	}
 
 	type ReqBody struct {
 		Cred   string `json:"cred"`

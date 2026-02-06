@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"canteen/internal/middleware"
 	"canteen/internal/routes/endpoints"
 	"log"
 	"os"
@@ -12,8 +11,6 @@ import (
 func InitRoute() {
 	route := gin.Default()
 	route.SetTrustedProxies([]string{"127.0.0.1"})
-
-	route.Use(middleware.CORS())
 
 	v1Endpoint := route.Group("/api/v1")
 	{
