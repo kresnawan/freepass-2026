@@ -3,7 +3,8 @@ package routes
 import (
 	"canteen/internal/middleware"
 	"canteen/internal/routes/endpoints"
-	"fmt"
+	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +27,9 @@ func InitRoute() {
 		endpoints.OwnerEndpointsGroup(v1Endpoint)
 	}
 
+	log.Printf("Starting BCC Canteen on :%s...", os.Getenv("PORT"))
 	if err := route.Run(); err != nil {
-		fmt.Println("ERROR on running server: ", err)
+		log.Fatal(err.Error())
 	}
+
 }
