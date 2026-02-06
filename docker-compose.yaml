@@ -1,0 +1,28 @@
+services:
+  db:
+    image: mariadb:latest
+    environment:
+      MARIADB_ROOT_PASSWORD: root123
+      MARIADB_DATABASE: bcc_canteen
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: admin123
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: admin
+      DB_PASS: admin123
+      DB_NAME: bcc_canteen
+      PORT: 3000
+      ACCESS_TOKEN_PK: 101fbcf331d24df7d6679c7a46190aa9391c94eb5606898d11ff8562b358619a19964a7b10c1af537aebdaffd68a52bdc1c3e2b4604bc95fafb7dd056c70810e
+      REFRESH_TOKEN_PK: 62c5b861e574de788f9916e01ca5898ee40f7e8dd5f8f8832ef2e01066eafea4898444273f7347d1a409e3a4d820df5c785d0ce39d7d86fc612caa9f8c2a678c
