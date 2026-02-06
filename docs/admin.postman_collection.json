@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "34d5c97c-a9b0-4609-9900-f7b2e61ae4e0",
 		"name": "admin",
+		"description": "Credentials for the root user (or admin) :\n\nusername: `root`\n\npassword: `root123`",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "17573798",
 		"_collection_link": "https://www.postman.com/kresnawan1/workspace/bcc-canteen/collection/17573798-34d5c97c-a9b0-4609-9900-f7b2e61ae4e0?action=share&source=collection_link&creator=17573798"
@@ -38,12 +39,12 @@
 						"canteen"
 					]
 				},
-				"description": "Add new canteen entity"
+				"description": "Add new canteen"
 			},
 			"response": []
 		},
 		{
-			"name": "Remove canteen",
+			"name": "Deactivate canteen",
 			"request": {
 				"method": "DELETE",
 				"header": [
@@ -67,11 +68,43 @@
 					"variable": [
 						{
 							"key": "canteen_id",
-							"value": "6"
+							"value": ""
 						}
 					]
 				},
 				"description": "Remove a canteen"
+			},
+			"response": []
+		},
+		{
+			"name": "Reactivate canteen",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/v1/canteen/:canteen_id",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"canteen",
+						":canteen_id"
+					],
+					"variable": [
+						{
+							"key": "canteen_id",
+							"value": ""
+						}
+					]
+				}
 			},
 			"response": []
 		},
@@ -168,7 +201,7 @@
 					"variable": [
 						{
 							"key": "owner_id",
-							"value": "01KGPMPSQAE221ZC4YN8DDB2AT"
+							"value": ""
 						}
 					]
 				},
@@ -215,7 +248,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"owner_id\": \"01KGPMPSQAE221ZC4YN8DDB2AT\"\n}",
+					"raw": "{\n    \"owner_id\": \"01KGS08QP3DVSAYQC3DPCE4T9G\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -237,7 +270,7 @@
 					"variable": [
 						{
 							"key": "canteen_id",
-							"value": "6"
+							"value": ""
 						}
 					]
 				}
@@ -312,7 +345,7 @@
 					"variable": [
 						{
 							"key": "canteen_id",
-							"value": "6"
+							"value": ""
 						}
 					]
 				}
@@ -352,7 +385,7 @@
 			"response": []
 		},
 		{
-			"name": "Deactive account",
+			"name": "Deactivate account",
 			"request": {
 				"method": "DELETE",
 				"header": [
@@ -380,12 +413,72 @@
 					"variable": [
 						{
 							"key": "account_id",
-							"value": "01KGK907HZMHJPSP2FXNES1A59"
+							"value": ""
 						}
 					]
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Reactivate account",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"cred\": \"kresnawan\",\n    \"password\": \"kres123\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/user/:account_id",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"user",
+						":account_id"
+					],
+					"variable": [
+						{
+							"key": "account_id",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
