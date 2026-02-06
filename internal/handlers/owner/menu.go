@@ -3,7 +3,7 @@ package owner
 import (
 	"canteen/internal/models"
 	"canteen/internal/sql"
-	"net/http"
+	"canteen/utility/api"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +14,7 @@ func AddMenu(c *gin.Context) {
 	var ReqBody models.Menu
 
 	if err := c.ShouldBindJSON(&ReqBody); err != nil {
-		c.String(500, err.Error())
+		c.JSON(400, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
@@ -23,12 +23,12 @@ func AddMenu(c *gin.Context) {
 	err := sql.InsertMenu(ReqBody)
 
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.String(200, "Menu added")
+	c.JSON(200, api.MakeResponse(1, "Menu added", nil))
 }
 
 func EditMenu(c *gin.Context) {
@@ -36,7 +36,7 @@ func EditMenu(c *gin.Context) {
 	var ReqBody models.Menu
 
 	if err := c.ShouldBindJSON(&ReqBody); err != nil {
-		c.String(500, err.Error())
+		c.JSON(400, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
@@ -44,12 +44,12 @@ func EditMenu(c *gin.Context) {
 	err := sql.UpdateMenu(mid, ReqBody.MenuName, ReqBody.Price)
 
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.String(200, "Menu updated")
+	c.JSON(200, api.MakeResponse(1, "Menu updated", nil))
 }
 
 func AddMenuStock(c *gin.Context) {
@@ -63,7 +63,7 @@ func AddMenuStock(c *gin.Context) {
 	err := c.ShouldBindJSON(&reqBody)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+		c.JSON(400, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
@@ -71,19 +71,19 @@ func AddMenuStock(c *gin.Context) {
 	menuidInt, err := strconv.Atoi(menuid)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
 	err = sql.AddStock(menuidInt, reqBody.Quantity)
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.String(200, "Stock added")
+	c.JSON(200, api.MakeResponse(1, "Stock added", nil))
 }
 
 func DeleteMenuById(c *gin.Context) {
@@ -92,10 +92,10 @@ func DeleteMenuById(c *gin.Context) {
 	err := sql.DeleteMenuById(mid)
 
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.String(200, "Menu deleted")
+	c.JSON(200, api.MakeResponse(1, "Menu removed", nil))
 }

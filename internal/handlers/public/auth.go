@@ -4,6 +4,7 @@ import (
 	"canteen/internal/models"
 	"canteen/internal/sql"
 	"canteen/internal/storage/mariadb"
+	"canteen/utility/api"
 	"canteen/utility/jwt"
 	"net/http"
 
@@ -41,9 +42,9 @@ func Login(c *gin.Context) {
 
 	if err != nil {
 		if err == mariadb.NoRows {
-			c.String(http.StatusNotFound, "Credential not found")
+			c.JSON(404, api.MakeResponse(0, "Email or username not found", nil))
 		} else {
-			c.String(http.StatusInternalServerError, err.Error())
+			c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		}
 
 		c.Abort()
@@ -53,7 +54,7 @@ func Login(c *gin.Context) {
 	match, _, _ := argon2id.CheckHash(acc.Passwd, passwd)
 
 	if !match {
-		c.String(http.StatusUnauthorized, "Wrong password")
+		c.JSON(http.StatusUnauthorized, api.MakeResponse(0, "Wrong password", nil))
 		c.Abort()
 		return
 	}
@@ -62,7 +63,7 @@ func Login(c *gin.Context) {
 	refreshToken, err := jwt.GenerateRefreshToken(accountId, role)
 
 	if err != nil {
-		c.String(http.StatusInternalServerError, "Token generation failed")
+		c.JSON(500, api.MakeResponse(0, "Token generation failed", nil))
 		c.Abort()
 		return
 	}
@@ -77,7 +78,7 @@ func Login(c *gin.Context) {
 		true,
 	)
 
-	c.Data(200, "", []byte(accessToken))
+	c.JSON(200, api.MakeResponse(1, "", accessToken))
 }
 
 func Register(c *gin.Context) {
@@ -88,13 +89,13 @@ func Register(c *gin.Context) {
 	exist, err := sql.GetUsernameEmailExistence(acc.Username, acc.Email)
 
 	if err != nil {
-		c.String(404, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
 	if !exist {
-		c.String(404, "Username or email have been used")
+		c.JSON(400, api.MakeResponse(0, "Username or email already exist", nil))
 		c.Abort()
 		return
 	}
@@ -102,12 +103,12 @@ func Register(c *gin.Context) {
 	err = sql.InsertCustomerProfile(acc)
 
 	if err != nil {
-		c.String(404, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.String(200, "", "Success")
+	c.JSON(200, api.MakeResponse(1, "Register successful", nil))
 
 }
 
@@ -117,13 +118,12 @@ func GetAccessToken(c *gin.Context) {
 	if err != nil {
 
 		if err == refreshToken.Valid() {
-			c.Data(http.StatusBadRequest, "", []byte("ERROR: Refresh token invalid"))
+			c.JSON(400, api.MakeResponse(0, "Refresh token invalid", nil))
 			c.Abort()
-
 			return
 		}
 
-		c.Data(http.StatusBadRequest, "", []byte("ERROR: Refresh token not found"))
+		c.JSON(400, api.MakeResponse(0, "Refresh token not found", nil))
 		c.Abort()
 
 		return
@@ -132,7 +132,7 @@ func GetAccessToken(c *gin.Context) {
 	token, _, err := jwt.VerifyRefreshToken(refreshToken.Value, &jwt.CustomClaims{})
 
 	if err != nil {
-		c.Data(http.StatusBadRequest, "", []byte("ERROR: Refresh token invalid"))
+		c.JSON(400, api.MakeResponse(0, "Refresh token invalid", nil))
 		c.Abort()
 		return
 	}
@@ -142,16 +142,16 @@ func GetAccessToken(c *gin.Context) {
 	newAccessToken, err := jwt.GenerateAccessToken(claims.AccountId, claims.Role)
 
 	if err != nil {
-		c.Data(500, "", []byte("ERROR: Access token regeneration failed"))
+		c.JSON(500, api.MakeResponse(0, "Access token regeneration failed", nil))
 		c.Abort()
 
 		return
 	}
 
-	c.Data(200, "", []byte(newAccessToken))
+	c.JSON(200, api.MakeResponse(1, "", newAccessToken))
 }
 
 func Logout(c *gin.Context) {
 	c.SetCookie("refreshToken", "", -1, "/", "localhost", false, true)
-	c.String(200, "Logged out")
+	c.JSON(200, api.MakeResponse(1, "Logged out", nil))
 }

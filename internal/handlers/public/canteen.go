@@ -8,22 +8,24 @@ import (
 )
 
 func GetCanteen(c *gin.Context) {
-	result, err := sql.SelectCanteen()
+	page := c.Query("page")
+	result, err := sql.SelectCanteen(page)
 
 	if err != nil {
-		c.JSON(500, gin.H{"msg": err.Error()})
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.JSON(200, result)
+	c.JSON(200, api.MakeResponse(1, "", result))
 }
 
 func GetAllMenu(c *gin.Context) {
-	res, err := sql.GetAllMenu()
+	page := c.Query("page")
+	res, err := sql.GetAllMenu(page)
 
 	if err != nil {
-		c.String(500, err.Msg)
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
@@ -33,27 +35,29 @@ func GetAllMenu(c *gin.Context) {
 
 func GetAllMenuByCanteen(c *gin.Context) {
 	cid := c.Param("cid")
-	res, err := sql.GetAllMenuByCanteen(cid)
+	page := c.Query("page")
 
+	res, err := sql.GetAllMenuByCanteen(cid, page)
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.JSON(200, res)
+	c.JSON(200, api.MakeResponse(1, "", res))
 }
 
 func GetCanteenFeedbacks(c *gin.Context) {
 	cid := c.Param("cid")
+	page := c.Query("page")
 
-	res, err := sql.SelectCanteenFeedback(cid)
+	res, err := sql.SelectCanteenFeedback(cid, page)
 
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.JSON(200, res)
+	c.JSON(200, api.MakeResponse(1, "", res))
 }

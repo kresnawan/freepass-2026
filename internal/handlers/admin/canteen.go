@@ -3,7 +3,7 @@ package admin
 import (
 	"canteen/internal/models"
 	"canteen/internal/sql"
-	"net/http"
+	"canteen/utility/api"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oklog/ulid/v2"
@@ -14,7 +14,7 @@ func CreateCanteen(c *gin.Context) {
 	err := c.ShouldBindJSON(&requestBody)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, "", "Request body parsing failed")
+		c.JSON(400, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
@@ -22,12 +22,12 @@ func CreateCanteen(c *gin.Context) {
 	_, err = sql.AddCanteen(requestBody.Name)
 
 	if err != nil {
-		c.String(http.StatusInternalServerError, "", err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.String(200, "Success")
+	c.JSON(200, api.MakeResponse(1, "Canteen created", nil))
 }
 
 func DeleteCanteen(c *gin.Context) {
@@ -35,42 +35,42 @@ func DeleteCanteen(c *gin.Context) {
 	res, err := sql.DeleteCanteen(param)
 
 	if err != nil {
-		c.JSON(500, gin.H{"msg": err.Error()})
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
 	if res == 0 {
-		c.String(404, "Not found")
+		c.JSON(404, api.MakeResponse(0, "Canteen not found", nil))
 		c.Abort()
 		return
 	}
 
-	c.String(200, "Success")
+	c.JSON(200, api.MakeResponse(1, "Canteen deleted", nil))
 }
 
 func GetAllCanteenOwnership(c *gin.Context) {
 	res, err := sql.SelectAllCanteenOwnership()
 
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.JSON(200, res)
+	c.JSON(200, api.MakeResponse(1, "", res))
 }
 
 func GetCanteenOwner(c *gin.Context) {
 	cid := c.Param("cid")
 	res, err := sql.SelectCanteenOwner(cid)
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.JSON(200, res)
+	c.JSON(200, api.MakeResponse(1, "", res))
 }
 
 func AddOwnership(c *gin.Context) {
@@ -81,26 +81,26 @@ func AddOwnership(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+		c.JSON(400, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
 	parsedId, err := ulid.Parse(reqBody.OwnerId)
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
 	err = sql.InsertOwnership(cid, parsedId)
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.String(200, "Ownership added")
+	c.JSON(200, api.MakeResponse(1, "Canteen ownership added", nil))
 }
 
 func DeleteOwnership(c *gin.Context) {
@@ -111,24 +111,24 @@ func DeleteOwnership(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+		c.JSON(400, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
 	parsedId, err := ulid.Parse(reqBody.OwnerId)
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
 	err = sql.DeleteOwnership(cid, parsedId)
 	if err != nil {
-		c.String(500, err.Error())
+		c.JSON(500, api.MakeResponse(0, err.Error(), nil))
 		c.Abort()
 		return
 	}
 
-	c.String(200, "Ownership removed")
+	c.JSON(200, api.MakeResponse(1, "Canteen ownership removed", nil))
 }
